@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 
-const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GzTPcV.pKCtFHVbbouqY8vWIGJG5n3VWJAt7cFmh6sIo8';
+const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
 
 const images = [
