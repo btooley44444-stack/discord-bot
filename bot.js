@@ -3,7 +3,7 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
 
-const media = [
+const images = [
   'https://i.ibb.co/YFvHXgVr/IMG-0367.jpg',
   'https://i.ibb.co/1JtfvJX2/IMG-0364.jpg',
   'https://i.ibb.co/Lz7wf8Dv/IMG-0368.jpg',
@@ -21,24 +21,50 @@ const media = [
   'https://files.catbox.moe/9ae8bt.jpeg',
   'https://files.catbox.moe/t3coaa.jpeg',
   'https://files.catbox.moe/lbiotk.jpeg',
-  'https://files.catbox.moe/9dr6sr.m4v',
-  'https://files.catbox.moe/02o0wi.m4v',
 ];
 
-let remaining = [...media];
+const videos = [
+  'https://files.catbox.moe/t3iytr.mp4',
+  'https://files.catbox.moe/rqe6h6.mp4',
+];
 
-function getRandomMedia() {
-  if (remaining.length === 0) remaining = [...media];
+const allMedia = [...images, ...videos];
+
+let remainingAll = [...allMedia];
+let remainingVideos = [...videos];
+
+function getRandom(arr, remaining, reset) {
+  if (remaining.length === 0) {
+    remaining.push(...arr);
+    reset(remaining);
+  }
   const index = Math.floor(Math.random() * remaining.length);
   return remaining.splice(index, 1)[0];
+}
+
+let remAll = [...allMedia];
+let remVideos = [...videos];
+
+function getRandomMedia() {
+  if (remAll.length === 0) remAll = [...allMedia];
+  const index = Math.floor(Math.random() * remAll.length);
+  return remAll.splice(index, 1)[0];
+}
+
+function getRandomVideo() {
+  if (remVideos.length === 0) remVideos = [...videos];
+  const index = Math.floor(Math.random() * remVideos.length);
+  return remVideos.splice(index, 1)[0];
 }
 
 const commands = [
   new SlashCommandBuilder()
     .setName('sr')
-    .setDescription('Sends a random picture or video')
-    .toJSON(),
-];
+    .setDescription('Sends a random picture or video'),
+  new SlashCommandBuilder()
+    .setName('sr-video')
+    .setDescription('Sends a random video'),
+].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
 
@@ -62,8 +88,11 @@ client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'sr') {
-    const randomMedia = getRandomMedia();
-    await interaction.reply({ content: randomMedia });
+    await interaction.reply({ content: getRandomMedia() });
+  }
+
+  if (interaction.commandName === 'sr-video') {
+    await interaction.reply({ content: getRandomVideo() });
   }
 });
 
