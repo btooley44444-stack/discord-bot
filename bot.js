@@ -76,100 +76,22 @@ const commands = [
         .setMinValue(1)
         .setMaxValue(10)
         .setRequired(false)
-    ),
-  new SlashCommandBuilder()
-    .setName('sr-video')
-    .setDescription('Sends a random video'),
-].map(cmd => cmd.toJSON());
-
-const rest = new REST({ version: '10' }).setToken(TOKEN);
-
-async function registerCommands() {
-  try {
-    console.log('Registering slash commands...');
-    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-    console.log('Slash commands registered!');
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === 'sr') {
-    const amount = interaction.options.getInteger('amount') || 1;
-
-    const selected = [];
-    for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
-      selected.push(getRandomMedia());
-    }
-
-    // Send first one as the reply, rest as follow-up messages
-    await interaction.reply({ content: selected[0] });
-    for (let i = 1; i < selected.length; i++) {
-      await interaction.followUp({ content: selected[i] });
-    }
-  }
-
-  if (interaction.commandName === 'sr-video') {
-    await interaction.reply({ content: getRandomVideo() });
-  }
-});
-
-registerCommands();
-client.login(TOKEN);  'https://i.postimg.cc/2qxbMJ0q/g-(3).jpg',
-  'https://i.postimg.cc/CBLBgN2Z/g-(4).jpg',
-  'https://i.postimg.cc/cg4gSmz3/g-(5).jpg',
-  'https://i.postimg.cc/mz2zswnQ/g-(6).jpg',
-  'https://i.postimg.cc/k6X6mcHc/g-(7).jpg',
-  'https://i.postimg.cc/ygYgHPGL/g-(8).jpg',
-  'https://i.postimg.cc/v1vgkj0s/r.jpg',
-];
-
-const videos = [
-  'https://files.catbox.moe/t3iytr.mp4',
-  'https://files.catbox.moe/rqe6h6.mp4',
-];
-
-const allMedia = [...images, ...videos];
-
-let remAll = [...allMedia];
-let remVideos = [...videos];
-
-function getRandomMedia() {
-  if (remAll.length === 0) remAll = [...allMedia];
-  const index = Math.floor(Math.random() * remAll.length);
-  return remAll.splice(index, 1)[0];
-}
-
-function getRandomVideo() {
-  if (remVideos.length === 0) remVideos = [...videos];
-  const index = Math.floor(Math.random() * remVideos.length);
-  return remVideos.splice(index, 1)[0];
-}
-
-const commands = [
-  new SlashCommandBuilder()
-    .setName('sr')
-    .setDescription('Sends random picture(s) or video(s)')
-    .addIntegerOption(option =>
+    )
+    .addBooleanOption(option =>
       option
-        .setName('amount')
-        .setDescription('How many to send (1-10)')
-        .setMinValue(1)
-        .setMaxValue(10)
+        .setName('private')
+        .setDescription('Only you can see it (default: everyone can see)')
         .setRequired(false)
     ),
   new SlashCommandBuilder()
     .setName('sr-video')
-    .setDescription('Sends a random video'),
+    .setDescription('Sends a random video')
+    .addBooleanOption(option =>
+      option
+        .setName('private')
+        .setDescription('Only you can see it (default: everyone can see)')
+        .setRequired(false)
+    ),
 ].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -195,31 +117,22 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'sr') {
     const amount = interaction.options.getInteger('amount') || 1;
+    const ephemeral = interaction.options.getBoolean('private') ?? false;
 
     const selected = [];
     for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
       selected.push(getRandomMedia());
     }
 
-    // Videos can't be embedded, send them as plain text separately
-    const videoResults = selected.filter(url => url.endsWith('.mp4'));
-    const imageResults = selected.filter(url => !url.endsWith('.mp4'));
-
-    // Build one embed per image (Discord shows all images when embeds share the same URL)
-    const embeds = imageResults.map(url =>
-      new EmbedBuilder().setURL('https://discord.com').setImage(url)
-    );
-
-    // Discord allows max 10 embeds per message
-    const replyOptions = {};
-    if (embeds.length > 0) replyOptions.embeds = embeds.slice(0, 10);
-    if (videoResults.length > 0) replyOptions.content = videoResults.join('\n');
-
-    await interaction.reply(replyOptions);
+    await interaction.reply({ content: selected[0], ephemeral });
+    for (let i = 1; i < selected.length; i++) {
+      await interaction.followUp({ content: selected[i], ephemeral });
+    }
   }
 
   if (interaction.commandName === 'sr-video') {
-    await interaction.reply({ content: getRandomVideo() });
+    const ephemeral = interaction.options.getBoolean('private') ?? false;
+    await interaction.reply({ content: getRandomVideo(), ephemeral });
   }
 });
 
