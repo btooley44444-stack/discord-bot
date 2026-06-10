@@ -20,7 +20,7 @@ const images = [
   'https://files.catbox.moe/n3ba1c.jpeg',
   'https://files.catbox.moe/9ae8bt.jpeg',
   'https://files.catbox.moe/t3coaa.jpeg',
-  'https://files.catbox.moe/lbiotk.jpeg'
+  'https://files.catbox.moe/lbiotk.jpeg',
   'https://i.postimg.cc/XZWB23cL/a.jpg',
   'https://i.postimg.cc/kVy6zZTn/b.jpg',
   'https://i.postimg.cc/qtr6m0x0/c.jpg',
@@ -50,18 +50,6 @@ const videos = [
 
 const allMedia = [...images, ...videos];
 
-let remainingAll = [...allMedia];
-let remainingVideos = [...videos];
-
-function getRandom(arr, remaining, reset) {
-  if (remaining.length === 0) {
-    remaining.push(...arr);
-    reset(remaining);
-  }
-  const index = Math.floor(Math.random() * remaining.length);
-  return remaining.splice(index, 1)[0];
-}
-
 let remAll = [...allMedia];
 let remVideos = [...videos];
 
@@ -80,7 +68,15 @@ function getRandomVideo() {
 const commands = [
   new SlashCommandBuilder()
     .setName('sr')
-    .setDescription('Sends a random picture or video'),
+    .setDescription('Sends random picture(s) or video(s)')
+    .addIntegerOption(option =>
+      option
+        .setName('amount')
+        .setDescription('How many to send (1-10)')
+        .setMinValue(1)
+        .setMaxValue(10)
+        .setRequired(false)
+    ),
   new SlashCommandBuilder()
     .setName('sr-video')
     .setDescription('Sends a random video'),
@@ -108,7 +104,12 @@ client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'sr') {
-    await interaction.reply({ content: getRandomMedia() });
+    const amount = interaction.options.getInteger('amount') || 1;
+    const results = [];
+    for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
+      results.push(getRandomMedia());
+    }
+    await interaction.reply({ content: results.join('\n') });
   }
 
   if (interaction.commandName === 'sr-video') {
