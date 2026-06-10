@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
@@ -35,6 +35,96 @@ const images = [
   'https://i.postimg.cc/yJTgt5Lk/g-(2).jpg',
   'https://i.postimg.cc/gXkXWD76/g-(3).jpg',
   'https://i.postimg.cc/2qxbMJ0q/g-(3).jpg',
+  'https://i.postimg.cc/CBLBgN2Z/g-(4).jpg',
+  'https://i.postimg.cc/cg4gSmz3/g-(5).jpg',
+  'https://i.postimg.cc/mz2zswnQ/g-(6).jpg',
+  'https://i.postimg.cc/k6X6mcHc/g-(7).jpg',
+  'https://i.postimg.cc/ygYgHPGL/g-(8).jpg',
+  'https://i.postimg.cc/v1vgkj0s/r.jpg',
+];
+
+const videos = [
+  'https://files.catbox.moe/t3iytr.mp4',
+  'https://files.catbox.moe/rqe6h6.mp4',
+];
+
+const allMedia = [...images, ...videos];
+
+let remAll = [...allMedia];
+let remVideos = [...videos];
+
+function getRandomMedia() {
+  if (remAll.length === 0) remAll = [...allMedia];
+  const index = Math.floor(Math.random() * remAll.length);
+  return remAll.splice(index, 1)[0];
+}
+
+function getRandomVideo() {
+  if (remVideos.length === 0) remVideos = [...videos];
+  const index = Math.floor(Math.random() * remVideos.length);
+  return remVideos.splice(index, 1)[0];
+}
+
+const commands = [
+  new SlashCommandBuilder()
+    .setName('sr')
+    .setDescription('Sends random picture(s) or video(s)')
+    .addIntegerOption(option =>
+      option
+        .setName('amount')
+        .setDescription('How many to send (1-10)')
+        .setMinValue(1)
+        .setMaxValue(10)
+        .setRequired(false)
+    ),
+  new SlashCommandBuilder()
+    .setName('sr-video')
+    .setDescription('Sends a random video'),
+].map(cmd => cmd.toJSON());
+
+const rest = new REST({ version: '10' }).setToken(TOKEN);
+
+async function registerCommands() {
+  try {
+    console.log('Registering slash commands...');
+    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+    console.log('Slash commands registered!');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+client.once('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
+});
+
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === 'sr') {
+    const amount = interaction.options.getInteger('amount') || 1;
+
+    const selected = [];
+    for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
+      selected.push(getRandomMedia());
+    }
+
+    // Send first one as the reply, rest as follow-up messages
+    await interaction.reply({ content: selected[0] });
+    for (let i = 1; i < selected.length; i++) {
+      await interaction.followUp({ content: selected[i] });
+    }
+  }
+
+  if (interaction.commandName === 'sr-video') {
+    await interaction.reply({ content: getRandomVideo() });
+  }
+});
+
+registerCommands();
+client.login(TOKEN);  'https://i.postimg.cc/2qxbMJ0q/g-(3).jpg',
   'https://i.postimg.cc/CBLBgN2Z/g-(4).jpg',
   'https://i.postimg.cc/cg4gSmz3/g-(5).jpg',
   'https://i.postimg.cc/mz2zswnQ/g-(6).jpg',
