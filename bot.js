@@ -85,12 +85,56 @@ const bhImages = [
   'https://files.catbox.moe/sz207b.jpg',
 ];
 
+const bhVideos = [
+  'https://files.catbox.moe/haqyqc.mp4',
+  'https://files.catbox.moe/4a4ezg.mp4',
+  'https://files.catbox.moe/vet3hg.mp4',
+  'https://files.catbox.moe/emjp2r.mp4',
+  'https://files.catbox.moe/tpr8wg.mp4',
+  'https://files.catbox.moe/ob1p7j.mp4',
+  'https://files.catbox.moe/c8ohy0.mp4',
+  'https://files.catbox.moe/dn06qe.mp4',
+  'https://files.catbox.moe/t3xg6l.mp4',
+  'https://files.catbox.moe/uxs2i2.mp4',
+  'https://files.catbox.moe/fejtjs.mp4',
+  'https://files.catbox.moe/724jdv.mp4',
+  'https://files.catbox.moe/jndwli.mp4',
+  'https://files.catbox.moe/ox6gk4.mp4',
+  'https://files.catbox.moe/o6rwil.mp4',
+  'https://files.catbox.moe/s3bygp.mp4',
+  'https://files.catbox.moe/6gppcg.mp4',
+  'https://files.catbox.moe/ci8d0p.mp4',
+  'https://files.catbox.moe/930nk7.mp4',
+  'https://files.catbox.moe/vaght7.mp4',
+  'https://files.catbox.moe/6a5dcd.mp4',
+  'https://files.catbox.moe/hrbbnt.mp4',
+  'https://files.catbox.moe/vybykc.mp4',
+  'https://files.catbox.moe/455tw2.mp4',
+  'https://files.catbox.moe/eg8pw3.mp4',
+  'https://files.catbox.moe/f484vj.mp4',
+  'https://files.catbox.moe/oc1upm.m4v',
+  'https://files.catbox.moe/1selbx.mp4',
+  'https://files.catbox.moe/5jpztm.mp4',
+  'https://files.catbox.moe/vcvavi.mp4',
+  'https://files.catbox.moe/nvdo6z.mp4',
+  'https://files.catbox.moe/skx1ne.mov',
+  'https://files.catbox.moe/seubon.mp4',
+  'https://files.catbox.moe/32q2uf.mov',
+  'https://files.catbox.moe/ryz0yi.mp4',
+  'https://files.catbox.moe/kvd10s.mov',
+  'https://files.catbox.moe/zu4xf1.mp4',
+  'https://files.catbox.moe/4duq9x.mov',
+];
+
 const allMedia = [...images, ...videos];
+const bhAllMedia = [...bhImages, ...bhVideos];
 
 let remImages = [...images];
 let remVideos = [...videos];
 let remAll = [...allMedia];
-let remBh = [...bhImages];
+let remBhImages = [...bhImages];
+let remBhVideos = [...bhVideos];
+let remBhAll = [...bhAllMedia];
 
 function getRandom(pool, reset) {
   if (pool.length === 0) pool.push(...reset());
@@ -98,10 +142,12 @@ function getRandom(pool, reset) {
   return pool.splice(index, 1)[0];
 }
 
-function getRandomImage() { return getRandom(remImages, () => [...images]); }
-function getRandomVideo() { return getRandom(remVideos, () => [...videos]); }
-function getRandomMedia() { return getRandom(remAll, () => [...allMedia]); }
-function getRandomBh() { return getRandom(remBh, () => [...bhImages]); }
+function getRandomImage()   { return getRandom(remImages,   () => [...images]); }
+function getRandomVideo()   { return getRandom(remVideos,   () => [...videos]); }
+function getRandomMedia()   { return getRandom(remAll,      () => [...allMedia]); }
+function getRandomBhImage() { return getRandom(remBhImages, () => [...bhImages]); }
+function getRandomBhVideo() { return getRandom(remBhVideos, () => [...bhVideos]); }
+function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia]); }
 
 const commands = [
   new SlashCommandBuilder()
@@ -113,9 +159,9 @@ const commands = [
         .setDescription('What to send (default: random)')
         .setRequired(false)
         .addChoices(
-          { name: 'Random', value: 'random' },
+          { name: 'Random',  value: 'random' },
           { name: 'Picture', value: 'picture' },
-          { name: 'Video', value: 'video' },
+          { name: 'Video',   value: 'video' },
         )
     )
     .addIntegerOption(option =>
@@ -134,7 +180,18 @@ const commands = [
     ),
   new SlashCommandBuilder()
     .setName('bh')
-    .setDescription('Sends random bh picture(s)')
+    .setDescription('Sends random bh media')
+    .addStringOption(option =>
+      option
+        .setName('type')
+        .setDescription('What to send (default: random)')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Random',  value: 'random' },
+          { name: 'Picture', value: 'picture' },
+          { name: 'Video',   value: 'video' },
+        )
+    )
     .addIntegerOption(option =>
       option
         .setName('amount')
@@ -177,7 +234,7 @@ client.on('interactionCreate', async interaction => {
     const amount = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
 
-    const pool = type === 'picture' ? images : type === 'video' ? videos : allMedia;
+    const pool  = type === 'picture' ? images    : type === 'video' ? videos    : allMedia;
     const getter = type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia;
 
     const selected = [];
@@ -192,12 +249,16 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === 'bh') {
+    const type = interaction.options.getString('type') || 'random';
     const amount = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
 
+    const pool   = type === 'picture' ? bhImages    : type === 'video' ? bhVideos    : bhAllMedia;
+    const getter = type === 'picture' ? getRandomBhImage : type === 'video' ? getRandomBhVideo : getRandomBhMedia;
+
     const selected = [];
-    for (let i = 0; i < Math.min(amount, bhImages.length); i++) {
-      selected.push(getRandomBh());
+    for (let i = 0; i < Math.min(amount, pool.length); i++) {
+      selected.push(getter());
     }
 
     await interaction.reply({ content: selected[0], ephemeral });
