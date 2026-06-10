@@ -41,6 +41,18 @@ const images = [
   'https://i.postimg.cc/k6X6mcHc/g-(7).jpg',
   'https://i.postimg.cc/ygYgHPGL/g-(8).jpg',
   'https://i.postimg.cc/v1vgkj0s/r.jpg',
+  'https://files.catbox.moe/iwz83a.png',
+  'https://files.catbox.moe/zmv62b.png',
+  'https://files.catbox.moe/2ui37i.png',
+  'https://files.catbox.moe/zqqz48.png',
+  'https://files.catbox.moe/3mpuir.png',
+  'https://files.catbox.moe/abkwi4.png',
+  'https://files.catbox.moe/jvfb9u.png',
+  'https://files.catbox.moe/o58iy8.png',
+  'https://files.catbox.moe/albhmv.jpeg',
+  'https://files.catbox.moe/1enxtg.jpeg',
+  'https://files.catbox.moe/qhxy08.jpg',
+  'https://files.catbox.moe/p7fl7y.jpeg',
 ];
 
 const videos = [
@@ -49,6 +61,7 @@ const videos = [
 ];
 
 const bhImages = [
+  // original
   'https://files.catbox.moe/qdema8.jpg',
   'https://files.catbox.moe/e847jg.jpg',
   'https://files.catbox.moe/pbhccu.jpg',
@@ -83,6 +96,204 @@ const bhImages = [
   'https://files.catbox.moe/2ya3gc.jpg',
   'https://files.catbox.moe/8zh27d.jpg',
   'https://files.catbox.moe/sz207b.jpg',
+  // new
+  'https://files.catbox.moe/nto6u9.jpg',
+  'https://files.catbox.moe/earjuv.jpg',
+  'https://files.catbox.moe/o6t55l.jpg',
+  'https://files.catbox.moe/qn39af.jpg',
+  'https://files.catbox.moe/n8n5br.jpg',
+  'https://files.catbox.moe/hwjad8.jpg',
+  'https://files.catbox.moe/2crn72.jpg',
+  'https://files.catbox.moe/oxcqvq.jpg',
+  'https://files.catbox.moe/bzwzw7.jpg',
+  'https://files.catbox.moe/ich6l0.jpg',
+  'https://files.catbox.moe/djlufm.jpg',
+  'https://files.catbox.moe/7wod9i.jpg',
+  'https://files.catbox.moe/d8b5z0.jpg',
+  'https://files.catbox.moe/m4tj12.jpg',
+  'https://files.catbox.moe/r81mgw.jpg',
+  'https://files.catbox.moe/u3hdpg.jpg',
+  'https://files.catbox.moe/2qvnq2.jpg',
+  'https://files.catbox.moe/jgdoy6.jpg',
+  'https://files.catbox.moe/f2g7dc.jpg',
+  'https://files.catbox.moe/8efwei.jpg',
+  'https://files.catbox.moe/4cktb0.jpg',
+  'https://files.catbox.moe/dd0gq3.jpg',
+  'https://files.catbox.moe/7v5cfn.jpg',
+  'https://files.catbox.moe/1kih2z.jpg',
+  'https://files.catbox.moe/62txsx.jpg',
+  'https://files.catbox.moe/869pq3.jpg',
+  'https://files.catbox.moe/6313k5.jpg',
+  'https://files.catbox.moe/cv697x.jpg',
+  'https://files.catbox.moe/ao2fk2.jpg',
+  'https://files.catbox.moe/5p6fli.jpg',
+  'https://files.catbox.moe/ow5rf1.jpg',
+  'https://files.catbox.moe/tuqzxn.jpg',
+  'https://files.catbox.moe/t3ycag.jpg',
+  'https://files.catbox.moe/ktz82j.jpg',
+  'https://files.catbox.moe/fkme4q.jpg',
+  'https://files.catbox.moe/d0q1y6.jpg',
+  'https://files.catbox.moe/mezk4x.jpg',
+  'https://files.catbox.moe/1m71ax.jpg',
+  'https://files.catbox.moe/wuewxe.jpg',
+  'https://files.catbox.moe/3guatf.jpg',
+  'https://files.catbox.moe/8qk2w5.jpg',
+  'https://files.catbox.moe/89i2qc.jpg',
+  'https://files.catbox.moe/637joj.jpg',
+  'https://files.catbox.moe/kkqdkb.jpg',
+  'https://files.catbox.moe/aufel5.jpg',
+  'https://files.catbox.moe/unpoqx.jpg',
+  'https://files.catbox.moe/cywva5.jpg',
+  'https://files.catbox.moe/jxztae.jpg',
+  'https://files.catbox.moe/vvuo5f.jpg',
+  'https://files.catbox.moe/2qebfg.jpg',
+  'https://files.catbox.moe/mqqjv3.jpg',
+  'https://files.catbox.moe/lffr38.jpg',
+  'https://files.catbox.moe/6ndakz.jpg',
+  'https://files.catbox.moe/6358n3.jpg',
+  'https://files.catbox.moe/j6xk9p.jpg',
+  'https://files.catbox.moe/p2cead.jpg',
+  'https://files.catbox.moe/lnori7.jpg',
+  'https://files.catbox.moe/3w2y0k.jpg',
+  'https://files.catbox.moe/zhwl8o.jpg',
+  'https://files.catbox.moe/2o4ktk.jpg',
+  'https://files.catbox.moe/ghjvhc.jpg',
+  'https://files.catbox.moe/28njyz.jpg',
+  'https://files.catbox.moe/cvwg06.jpg',
+  'https://files.catbox.moe/ts8npf.jpg',
+  'https://files.catbox.moe/g8471b.jpg',
+  'https://files.catbox.moe/l6apo7.jpg',
+  'https://files.catbox.moe/mok45y.jpg',
+  'https://files.catbox.moe/im69v4.jpg',
+  'https://files.catbox.moe/ozgpj2.jpg',
+  'https://files.catbox.moe/2pqu94.jpg',
+  'https://files.catbox.moe/mpy6ye.jpg',
+  'https://files.catbox.moe/e5oq7c.jpg',
+  'https://files.catbox.moe/emqb52.jpg',
+  'https://files.catbox.moe/s69820.jpg',
+  'https://files.catbox.moe/xwzhnv.jpg',
+  'https://files.catbox.moe/b8desi.jpg',
+  'https://files.catbox.moe/3reoy7.jpg',
+  'https://files.catbox.moe/y8fw13.jpg',
+  'https://files.catbox.moe/9xbccu.jpg',
+  'https://files.catbox.moe/xyr40b.jpg',
+  'https://files.catbox.moe/do032s.jpg',
+  'https://files.catbox.moe/sy3h7t.jpg',
+  'https://files.catbox.moe/4pc3nz.jpg',
+  'https://files.catbox.moe/66ftwc.jpg',
+  'https://files.catbox.moe/3730rg.jpg',
+  'https://files.catbox.moe/bzpu5b.jpg',
+  'https://files.catbox.moe/4tk5uh.jpg',
+  'https://files.catbox.moe/i9hxgb.jpg',
+  'https://files.catbox.moe/zjxf6g.jpg',
+  'https://files.catbox.moe/rp8hh4.jpg',
+  'https://files.catbox.moe/2ylr9a.jpg',
+  'https://files.catbox.moe/qcjin7.jpg',
+  'https://files.catbox.moe/72kdbw.jpg',
+  'https://files.catbox.moe/ij21m0.jpg',
+  'https://files.catbox.moe/ylzpab.jpg',
+  'https://files.catbox.moe/4rxemq.jpg',
+  'https://files.catbox.moe/47h07s.jpg',
+  'https://files.catbox.moe/iz8qhf.jpg',
+  'https://files.catbox.moe/3jofid.jpg',
+  'https://files.catbox.moe/uw3fvu.jpg',
+  'https://files.catbox.moe/82ai37.jpg',
+  'https://files.catbox.moe/cg35l3.jpg',
+  'https://files.catbox.moe/amoaj3.jpg',
+  'https://files.catbox.moe/ihmmjq.jpg',
+  'https://files.catbox.moe/nfm4yg.jpg',
+  'https://files.catbox.moe/ye0rn9.jpg',
+  'https://files.catbox.moe/a8dfaf.jpg',
+  'https://files.catbox.moe/aiay09.jpg',
+  'https://files.catbox.moe/ir4ccm.jpg',
+  'https://files.catbox.moe/yzzevz.jpg',
+  'https://files.catbox.moe/0sfcve.jpg',
+  'https://files.catbox.moe/liu3io.jpg',
+  'https://files.catbox.moe/tmbxmd.jpg',
+  'https://files.catbox.moe/84o2z9.jpg',
+  'https://files.catbox.moe/f4and0.jpg',
+  'https://files.catbox.moe/gnuk5u.jpg',
+  'https://files.catbox.moe/bmqkvq.jpg',
+  'https://files.catbox.moe/cc9wtx.jpg',
+  'https://files.catbox.moe/wuji3a.jpg',
+  'https://files.catbox.moe/mchiwd.jpg',
+  'https://files.catbox.moe/hvdxqi.jpg',
+  'https://files.catbox.moe/41yja4.jpg',
+  'https://files.catbox.moe/3i2dfm.jpg',
+  'https://files.catbox.moe/e7ewpv.jpg',
+  'https://files.catbox.moe/dhs7q3.jpg',
+  'https://files.catbox.moe/l1c915.jpg',
+  'https://files.catbox.moe/e7499b.jpg',
+  'https://files.catbox.moe/s12v1r.jpg',
+  'https://files.catbox.moe/s18unz.jpg',
+  'https://files.catbox.moe/ryno49.jpg',
+  'https://files.catbox.moe/ste2p9.jpg',
+  'https://files.catbox.moe/pt0109.jpg',
+  'https://files.catbox.moe/gapzty.jpg',
+  'https://files.catbox.moe/2l9m5j.jpg',
+  'https://files.catbox.moe/47b20h.jpg',
+  'https://files.catbox.moe/99du0o.jpg',
+  'https://files.catbox.moe/in8d04.jpg',
+  'https://files.catbox.moe/7dgvfg.jpg',
+  'https://files.catbox.moe/jfvxeb.jpg',
+  'https://files.catbox.moe/3xdq6x.jpg',
+  'https://files.catbox.moe/jkw3vb.jpg',
+  'https://files.catbox.moe/77p2x0.jpg',
+  'https://files.catbox.moe/9nd71r.jpg',
+  'https://files.catbox.moe/zy098v.jpeg',
+  'https://files.catbox.moe/l3jqvw.jpg',
+  'https://files.catbox.moe/7mqg5x.jpeg',
+  'https://files.catbox.moe/envx7s.jpg',
+  'https://files.catbox.moe/3i9zz9.jpeg',
+  'https://files.catbox.moe/gis234.jpg',
+  'https://files.catbox.moe/lvkn2l.jpg',
+  'https://files.catbox.moe/jmlg9y.jpeg',
+  'https://files.catbox.moe/u3r4i8.jpeg',
+  'https://files.catbox.moe/qyn0om.jpg',
+  'https://files.catbox.moe/ts3tjh.png',
+  'https://files.catbox.moe/u90fwe.jpeg',
+  'https://files.catbox.moe/mqfknh.jpg',
+  'https://files.catbox.moe/jytn96.jpg',
+  'https://files.catbox.moe/re53y8.png',
+  'https://files.catbox.moe/qqj67y.jpeg',
+  'https://files.catbox.moe/cvmygy.png',
+  'https://files.catbox.moe/bdhfex.jpeg',
+  'https://files.catbox.moe/qnyf22.jpg',
+  'https://files.catbox.moe/8hd4m0.PNG',
+  'https://files.catbox.moe/iq1yft.jpeg',
+  'https://files.catbox.moe/jjoejz.jpg',
+  'https://files.catbox.moe/urnr7u.jpg',
+  'https://files.catbox.moe/wql2fx.PNG',
+  'https://files.catbox.moe/jj7jqi.jpeg',
+  'https://files.catbox.moe/micj8v.jpg',
+  'https://files.catbox.moe/av8bz8.jpeg',
+  'https://files.catbox.moe/9qv9kl.PNG',
+  'https://files.catbox.moe/gnoo5w.jpg',
+  'https://files.catbox.moe/j2qnn4.jpeg',
+  'https://files.catbox.moe/esp96n.PNG',
+  'https://files.catbox.moe/tukkim.PNG',
+  'https://files.catbox.moe/zbxqpc.jpg',
+  'https://files.catbox.moe/nkgt5k.jpeg',
+  'https://files.catbox.moe/e9985b.PNG',
+  'https://files.catbox.moe/5bb956.jpg',
+  'https://files.catbox.moe/t80ysu.jpeg',
+  'https://files.catbox.moe/ar4kr1.jpeg',
+  'https://files.catbox.moe/9rax01.png',
+  'https://files.catbox.moe/iye3m7.jpg',
+  'https://files.catbox.moe/ic2uig.jpg',
+  'https://files.catbox.moe/50slpl.png',
+  'https://files.catbox.moe/xgr8ww.jpeg',
+  'https://files.catbox.moe/1nutio.png',
+  'https://files.catbox.moe/83bbgf.png',
+  'https://files.catbox.moe/beomtz.jpeg',
+  'https://files.catbox.moe/9ppz3v.jpg',
+  'https://files.catbox.moe/bgr4ey.PNG',
+  'https://files.catbox.moe/u0y0ib.jpeg',
+  'https://files.catbox.moe/p4g4ew.jpg',
+  'https://files.catbox.moe/xv2u0b.jpg',
+  'https://files.catbox.moe/bd3p5b.jpeg',
+  'https://files.catbox.moe/3qudil.jpg',
+  'https://files.catbox.moe/uyhced.jpeg',
 ];
 
 const bhVideos = [
@@ -129,12 +340,12 @@ const bhVideos = [
 const allMedia = [...images, ...videos];
 const bhAllMedia = [...bhImages, ...bhVideos];
 
-let remImages = [...images];
-let remVideos = [...videos];
-let remAll = [...allMedia];
+let remImages   = [...images];
+let remVideos   = [...videos];
+let remAll      = [...allMedia];
 let remBhImages = [...bhImages];
 let remBhVideos = [...bhVideos];
-let remBhAll = [...bhAllMedia];
+let remBhAll    = [...bhAllMedia];
 
 function getRandom(pool, reset) {
   if (pool.length === 0) pool.push(...reset());
@@ -230,11 +441,11 @@ client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'sr') {
-    const type = interaction.options.getString('type') || 'random';
-    const amount = interaction.options.getInteger('amount') || 1;
+    const type      = interaction.options.getString('type') || 'random';
+    const amount    = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
 
-    const pool  = type === 'picture' ? images    : type === 'video' ? videos    : allMedia;
+    const pool   = type === 'picture' ? images    : type === 'video' ? videos    : allMedia;
     const getter = type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia;
 
     const selected = [];
@@ -249,8 +460,8 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === 'bh') {
-    const type = interaction.options.getString('type') || 'random';
-    const amount = interaction.options.getInteger('amount') || 1;
+    const type      = interaction.options.getString('type') || 'random';
+    const amount    = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
 
     const pool   = type === 'picture' ? bhImages    : type === 'video' ? bhVideos    : bhAllMedia;
