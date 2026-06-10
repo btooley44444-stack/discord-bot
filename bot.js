@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
@@ -105,11 +105,27 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'sr') {
     const amount = interaction.options.getInteger('amount') || 1;
-    const results = [];
+
+    const selected = [];
     for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
-      results.push(getRandomMedia());
+      selected.push(getRandomMedia());
     }
-    await interaction.reply({ content: results.join('\n') });
+
+    // Videos can't be embedded, send them as plain text separately
+    const videoResults = selected.filter(url => url.endsWith('.mp4'));
+    const imageResults = selected.filter(url => !url.endsWith('.mp4'));
+
+    // Build one embed per image (Discord shows all images when embeds share the same URL)
+    const embeds = imageResults.map(url =>
+      new EmbedBuilder().setURL('https://discord.com').setImage(url)
+    );
+
+    // Discord allows max 10 embeds per message
+    const replyOptions = {};
+    if (embeds.length > 0) replyOptions.embeds = embeds.slice(0, 10);
+    if (videoResults.length > 0) replyOptions.content = videoResults.join('\n');
+
+    await interaction.reply(replyOptions);
   }
 
   if (interaction.commandName === 'sr-video') {
