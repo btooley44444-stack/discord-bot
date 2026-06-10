@@ -406,9 +406,9 @@ const commands = [
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('How many to send (1-10)')
+        .setDescription('How many to send (1-100)')
         .setMinValue(1)
-        .setMaxValue(10)
+        .setMaxValue(100)
         .setRequired(false)
     )
     .addBooleanOption(option =>
