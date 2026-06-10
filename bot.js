@@ -48,27 +48,76 @@ const videos = [
   'https://files.catbox.moe/rqe6h6.mp4',
 ];
 
+const bhImages = [
+  'https://i.postimg.cc/G8g0pFL1/onlyfansgateway-on-Telegram-1.jpg',
+  'https://i.postimg.cc/hzZFGLDc/onlyfansgateway-on-Telegram-10.png',
+  'https://i.postimg.cc/8JX8CRpp/onlyfansgateway-on-Telegram-12.png',
+  'https://i.postimg.cc/S210K6y5/onlyfansgateway-on-Telegram-13.jpg',
+  'https://i.postimg.cc/jwS0Kgr9/onlyfansgateway-on-Telegram-1320.jpg',
+  'https://i.postimg.cc/8JX8CR10/onlyfansgateway-on-Telegram-178.jpg',
+  'https://i.postimg.cc/TLN8PVd2/onlyfansgateway-on-Telegram-18.png',
+  'https://i.postimg.cc/G8g0pFLp/onlyfansgateway-on-Telegram-21.jpg',
+  'https://i.postimg.cc/ZBskq8TV/onlyfansgateway-on-Telegram-270.jpg',
+  'https://i.postimg.cc/H8rq8rnC/onlyfansgateway-on-Telegram-28.png',
+  'https://i.postimg.cc/ZBskq8bS/onlyfansgateway-on-Telegram-3.jpg',
+  'https://i.postimg.cc/G8g0pFLt/onlyfansgateway-on-Telegram-30.png',
+  'https://i.postimg.cc/ftq4bcwp/onlyfansgateway-on-Telegram-32.png',
+  'https://i.postimg.cc/5QXhQXyJ/onlyfansgateway-on-Telegram-37.jpg',
+  'https://i.postimg.cc/dkNM02qS/onlyfansgateway-on-Telegram-39.jpg',
+  'https://i.postimg.cc/YGDcS6rK/onlyfansgateway-on-Telegram-4.png',
+  'https://i.postimg.cc/SYnBYnRx/onlyfansgateway-on-Telegram-44.png',
+  'https://i.postimg.cc/BL7WvTqz/onlyfansgateway-on-Telegram-49.jpg',
+  'https://i.postimg.cc/JDYwhNr8/onlyfansgateway-on-Telegram-5.jpg',
+  'https://i.postimg.cc/DJpVzr2j/onlyfansgateway-on-Telegram-551-(1).jpg',
+  'https://i.postimg.cc/WqdBqdzp/onlyfansgateway-on-Telegram-63.jpg',
+  'https://i.postimg.cc/kR20R2GX/onlyfansgateway-on-Telegram-64.png',
+  'https://i.postimg.cc/rRDBRDs8/onlyfansgateway-on-Telegram-77.jpg',
+  'https://i.postimg.cc/34fMwXK9/onlyfansgateway-on-Telegram-897.jpg',
+  'https://i.postimg.cc/bDVXvxzm/onlyfansgateway-on-Telegram-898-(1).jpg',
+  'https://i.postimg.cc/xJprdvf9/onlyfansgateway-on-Telegram-9.jpg',
+  'https://i.postimg.cc/4nMkkQ2B/y-(1).jpg',
+  'https://i.postimg.cc/56CcxQDK/y-(10).png',
+  'https://i.postimg.cc/MvQkWfgP/y-(11).png',
+  'https://i.postimg.cc/RNHrMJjm/y-(21).jpg',
+  'https://i.postimg.cc/pmbwyXHM/y-(23).jpg',
+  'https://i.postimg.cc/Bj9rtQ09/y-(24).jpg',
+  'https://i.postimg.cc/ZWtG0KSk/y-(25).jpg',
+  'https://i.postimg.cc/xq7DD3pp/y-(3).jpg',
+];
+
 const allMedia = [...images, ...videos];
 
-let remAll = [...allMedia];
+let remImages = [...images];
 let remVideos = [...videos];
+let remAll = [...allMedia];
+let remBh = [...bhImages];
 
-function getRandomMedia() {
-  if (remAll.length === 0) remAll = [...allMedia];
-  const index = Math.floor(Math.random() * remAll.length);
-  return remAll.splice(index, 1)[0];
+function getRandom(pool, reset) {
+  if (pool.length === 0) pool.push(...reset());
+  const index = Math.floor(Math.random() * pool.length);
+  return pool.splice(index, 1)[0];
 }
 
-function getRandomVideo() {
-  if (remVideos.length === 0) remVideos = [...videos];
-  const index = Math.floor(Math.random() * remVideos.length);
-  return remVideos.splice(index, 1)[0];
-}
+function getRandomImage() { return getRandom(remImages, () => [...images]); }
+function getRandomVideo() { return getRandom(remVideos, () => [...videos]); }
+function getRandomMedia() { return getRandom(remAll, () => [...allMedia]); }
+function getRandomBh() { return getRandom(remBh, () => [...bhImages]); }
 
 const commands = [
   new SlashCommandBuilder()
     .setName('sr')
-    .setDescription('Sends random picture(s) or video(s)')
+    .setDescription('Sends random media')
+    .addStringOption(option =>
+      option
+        .setName('type')
+        .setDescription('What to send (default: random)')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Random', value: 'random' },
+          { name: 'Picture', value: 'picture' },
+          { name: 'Video', value: 'video' },
+        )
+    )
     .addIntegerOption(option =>
       option
         .setName('amount')
@@ -84,8 +133,16 @@ const commands = [
         .setRequired(false)
     ),
   new SlashCommandBuilder()
-    .setName('sr-video')
-    .setDescription('Sends a random video')
+    .setName('bh')
+    .setDescription('Sends random bh picture(s)')
+    .addIntegerOption(option =>
+      option
+        .setName('amount')
+        .setDescription('How many to send (1-10)')
+        .setMinValue(1)
+        .setMaxValue(10)
+        .setRequired(false)
+    )
     .addBooleanOption(option =>
       option
         .setName('private')
@@ -116,12 +173,16 @@ client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'sr') {
+    const type = interaction.options.getString('type') || 'random';
     const amount = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
 
+    const pool = type === 'picture' ? images : type === 'video' ? videos : allMedia;
+    const getter = type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia;
+
     const selected = [];
-    for (let i = 0; i < Math.min(amount, allMedia.length); i++) {
-      selected.push(getRandomMedia());
+    for (let i = 0; i < Math.min(amount, pool.length); i++) {
+      selected.push(getter());
     }
 
     await interaction.reply({ content: selected[0], ephemeral });
@@ -130,9 +191,19 @@ client.on('interactionCreate', async interaction => {
     }
   }
 
-  if (interaction.commandName === 'sr-video') {
+  if (interaction.commandName === 'bh') {
+    const amount = interaction.options.getInteger('amount') || 1;
     const ephemeral = interaction.options.getBoolean('private') ?? false;
-    await interaction.reply({ content: getRandomVideo(), ephemeral });
+
+    const selected = [];
+    for (let i = 0; i < Math.min(amount, bhImages.length); i++) {
+      selected.push(getRandomBh());
+    }
+
+    await interaction.reply({ content: selected[0], ephemeral });
+    for (let i = 1; i < selected.length; i++) {
+      await interaction.followUp({ content: selected[i], ephemeral });
+    }
   }
 });
 
