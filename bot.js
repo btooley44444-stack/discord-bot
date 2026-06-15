@@ -58,6 +58,16 @@ const images = [
 const videos = [
   'https://files.catbox.moe/t3iytr.mp4',
   'https://files.catbox.moe/rqe6h6.mp4',
+  'https://files.catbox.moe/6xym5u.mp4',
+  'https://files.catbox.moe/w92804.mp4',
+  'https://files.catbox.moe/4nixmg.mp4',
+  'https://files.catbox.moe/5r8jka.mov',
+  'https://files.catbox.moe/m36wh6.mov',
+  'https://files.catbox.moe/8gxrez.mp4',
+  'https://files.catbox.moe/c4mejo.mov',
+  'https://files.catbox.moe/nhdbaw.mp4',
+  'https://files.catbox.moe/cl05iu.m4v',
+  'https://files.catbox.moe/7feudv.m4v',
 ];
 
 const bhImages = [
