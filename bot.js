@@ -447,45 +447,38 @@ client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
+async function sendViaDM(interaction, selected) {
+  try {
+    await interaction.reply({ content: '📬 Sending to your DMs!', ephemeral: true });
+    for (const item of selected) {
+      await interaction.user.send(item);
+    }
+  } catch {
+    await interaction.editReply({ content: '❌ Couldn\'t DM you — make sure your DMs are open!' });
+  }
+}
+
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === 'sr') {
-    const type      = interaction.options.getString('type') || 'random';
-    const amount    = interaction.options.getInteger('amount') || 1;
-    const ephemeral = interaction.options.getBoolean('private') ?? false;
-
-    const pool   = type === 'picture' ? images    : type === 'video' ? videos    : allMedia;
+    const type   = interaction.options.getString('type') || 'random';
+    const amount = interaction.options.getInteger('amount') || 1;
+    const pool   = type === 'picture' ? images : type === 'video' ? videos : allMedia;
     const getter = type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia;
-
     const selected = [];
-    for (let i = 0; i < Math.min(amount, pool.length); i++) {
-      selected.push(getter());
-    }
-
-    await interaction.reply({ content: selected[0], ephemeral });
-    for (let i = 1; i < selected.length; i++) {
-      await interaction.followUp({ content: selected[i], ephemeral });
-    }
+    for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
+    await sendViaDM(interaction, selected);
   }
 
   if (interaction.commandName === 'bh') {
-    const type      = interaction.options.getString('type') || 'random';
-    const amount    = interaction.options.getInteger('amount') || 1;
-    const ephemeral = interaction.options.getBoolean('private') ?? false;
-
-    const pool   = type === 'picture' ? bhImages    : type === 'video' ? bhVideos    : bhAllMedia;
+    const type   = interaction.options.getString('type') || 'random';
+    const amount = interaction.options.getInteger('amount') || 1;
+    const pool   = type === 'picture' ? bhImages : type === 'video' ? bhVideos : bhAllMedia;
     const getter = type === 'picture' ? getRandomBhImage : type === 'video' ? getRandomBhVideo : getRandomBhMedia;
-
     const selected = [];
-    for (let i = 0; i < Math.min(amount, pool.length); i++) {
-      selected.push(getter());
-    }
-
-    await interaction.reply({ content: selected[0], ephemeral });
-    for (let i = 1; i < selected.length; i++) {
-      await interaction.followUp({ content: selected[i], ephemeral });
-    }
+    for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
+    await sendViaDM(interaction, selected);
   }
 });
 
