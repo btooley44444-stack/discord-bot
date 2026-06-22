@@ -1,87 +1,68 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+const { File } = require('megajs');
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
- 
-const images = [
-  'https://i.ibb.co/YFvHXgVr/IMG-0367.jpg',
-  'https://i.ibb.co/1JtfvJX2/IMG-0364.jpg',
-  'https://i.ibb.co/Lz7wf8Dv/IMG-0368.jpg',
-  'https://i.ibb.co/BKtR79FV/IMG-0366.jpg',
-  'https://files.catbox.moe/jfuuxb.jpeg',
-  'https://files.catbox.moe/nnxbfq.jpeg',
-  'https://files.catbox.moe/pxrmvd.png',
-  'https://files.catbox.moe/y3lnau.jpeg',
-  'https://files.catbox.moe/lxizx9.png',
-  'https://files.catbox.moe/4qox4q.jpeg',
-  'https://files.catbox.moe/nmyiy4.jpeg',
-  'https://files.catbox.moe/bos2rr.jpeg',
-  'https://files.catbox.moe/3yupte.jpeg',
-  'https://files.catbox.moe/n3ba1c.jpeg',
-  'https://files.catbox.moe/9ae8bt.jpeg',
-  'https://files.catbox.moe/t3coaa.jpeg',
-  'https://files.catbox.moe/lbiotk.jpeg',
-  'https://i.postimg.cc/XZWB23cL/a.jpg',
-  'https://i.postimg.cc/kVy6zZTn/b.jpg',
-  'https://i.postimg.cc/qtr6m0x0/c.jpg',
-  'https://i.postimg.cc/d7FZWvjw/d.jpg',
-  'https://i.postimg.cc/FfvkPmVQ/e.jpg',
-  'https://i.postimg.cc/LqVYw7N7/f.png',
-  'https://i.postimg.cc/Fdsd4Z61/g-(1).png',
-  'https://i.postimg.cc/1n5nQHdB/g-(1).jpg',
-  'https://i.postimg.cc/wtkyZPwg/g-(1).jpg',
-  'https://i.postimg.cc/9RFRhpkg/g-(2).jpg',
-  'https://i.postimg.cc/WD7FCK5t/g-(2).png',
-  'https://i.postimg.cc/yJTgt5Lk/g-(2).jpg',
-  'https://i.postimg.cc/gXkXWD76/g-(3).jpg',
-  'https://i.postimg.cc/2qxbMJ0q/g-(3).jpg',
-  'https://i.postimg.cc/CBLBgN2Z/g-(4).jpg',
-  'https://i.postimg.cc/cg4gSmz3/g-(5).jpg',
-  'https://i.postimg.cc/mz2zswnQ/g-(6).jpg',
-  'https://i.postimg.cc/k6X6mcHc/g-(7).jpg',
-  'https://i.postimg.cc/ygYgHPGL/g-(8).jpg',
-  'https://i.postimg.cc/v1vgkj0s/r.jpg',
-  'https://files.catbox.moe/iwz83a.png',
-  'https://files.catbox.moe/zmv62b.png',
-  'https://files.catbox.moe/2ui37i.png',
-  'https://files.catbox.moe/zqqz48.png',
-  'https://files.catbox.moe/3mpuir.png',
-  'https://files.catbox.moe/abkwi4.png',
-  'https://files.catbox.moe/jvfb9u.png',
-  'https://files.catbox.moe/o58iy8.png',
-  'https://files.catbox.moe/albhmv.jpeg',
-  'https://files.catbox.moe/1enxtg.jpeg',
-  'https://files.catbox.moe/qhxy08.jpg',
-  'https://files.catbox.moe/p7fl7y.jpeg',
-];
- 
-const videos = [
-  'https://files.catbox.moe/t3iytr.mp4',
-  'https://files.catbox.moe/rqe6h6.mp4',
-  'https://files.catbox.moe/6xym5u.mp4',
-  'https://files.catbox.moe/w92804.mp4',
-  'https://files.catbox.moe/4nixmg.mp4',
-  'https://files.catbox.moe/5r8jka.mov',
-  'https://files.catbox.moe/m36wh6.mov',
-  'https://files.catbox.moe/8gxrez.mp4',
-  'https://files.catbox.moe/c4mejo.mov',
-  'https://files.catbox.moe/nhdbaw.mp4',
-  'https://files.catbox.moe/cl05iu.m4v',
-  'https://files.catbox.moe/7feudv.m4v',
-  'https://files.catbox.moe/dakjgb.mp4',
-  'https://files.catbox.moe/lw2b6x.mp4',
-  'https://files.catbox.moe/5y3h8w.mp4',
-  'https://files.catbox.moe/gg4u80.mp4',
-  'https://files.catbox.moe/njn42j.mp4',
-  'https://files.catbox.moe/f7nfyn.mp4',
-  'https://files.catbox.moe/nng20h.mp4',
-  'https://files.catbox.moe/t74poe.mp4',
-  'https://files.catbox.moe/dos3ka.mp4',
-  'https://files.catbox.moe/5lmrjm.mp4',
-  'https://files.catbox.moe/b379c1.mp4',
-  'https://files.catbox.moe/in87p7.mp4',
-];
- 
+const MEGA_FOLDER = 'https://mega.nz/folder/hVhAkK6Y#3flyISKl_JdbtowhFlLerA';
+
+// ── MEGA / SR setup ────────────────────────────────────────────────────────
+const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB — Discord's upload limit
+const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp']);
+const VIDEO_EXTS = new Set(['.mp4', '.mov', '.m4v', '.webm']);
+
+let srImages = [];
+let srVideos = [];
+let srAll    = [];
+
+function getExt(name) {
+  return name.slice(name.lastIndexOf('.')).toLowerCase();
+}
+
+async function loadSrFiles() {
+  try {
+    console.log('Loading /sr files from MEGA...');
+    const folder = File.fromURL(MEGA_FOLDER);
+    await folder.loadAttributes();
+
+    for (const file of folder.children) {
+      if (file.directory) continue;
+      if (file.size > MAX_FILE_SIZE) {
+        console.log(`Skipping ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB — over 25 MB limit)`);
+        continue;
+      }
+      const ext = getExt(file.name);
+      if (IMAGE_EXTS.has(ext))      srImages.push(file);
+      else if (VIDEO_EXTS.has(ext)) srVideos.push(file);
+    }
+
+    srAll = [...srImages, ...srVideos];
+    console.log(`/sr ready: ${srImages.length} images, ${srVideos.length} videos`);
+  } catch (err) {
+    console.error('MEGA load error:', err);
+  }
+}
+
+function downloadBuffer(file) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    const stream = file.download();
+    stream.on('data',  c   => chunks.push(c));
+    stream.on('end',   ()  => resolve(Buffer.concat(chunks)));
+    stream.on('error', err => reject(err));
+  });
+}
+
+function pickRandom(pool, count) {
+  const copy = [...pool];
+  const out  = [];
+  for (let i = 0; i < Math.min(count, copy.length); i++) {
+    const idx = Math.floor(Math.random() * copy.length);
+    out.push(copy.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
+// ── BH arrays (unchanged) ─────────────────────────────────────────────────
 const bhImages = [
   'https://files.catbox.moe/qdema8.jpg',
   'https://files.catbox.moe/e847jg.jpg',
@@ -315,7 +296,7 @@ const bhImages = [
   'https://files.catbox.moe/3qudil.jpg',
   'https://files.catbox.moe/uyhced.jpeg',
 ];
- 
+
 const bhVideos = [
   'https://files.catbox.moe/haqyqc.mp4',
   'https://files.catbox.moe/4a4ezg.mp4',
@@ -356,31 +337,24 @@ const bhVideos = [
   'https://files.catbox.moe/zu4xf1.mp4',
   'https://files.catbox.moe/4duq9x.mov',
 ];
- 
-const allMedia   = [...images,   ...videos];
+
 const bhAllMedia = [...bhImages, ...bhVideos];
- 
-let remImages   = [...images];
-let remVideos   = [...videos];
-let remAll      = [...allMedia];
+
 let remBhImages = [...bhImages];
 let remBhVideos = [...bhVideos];
 let remBhAll    = [...bhAllMedia];
- 
+
 function getRandom(pool, reset) {
   if (pool.length === 0) pool.push(...reset());
   const index = Math.floor(Math.random() * pool.length);
   return pool.splice(index, 1)[0];
 }
- 
-function getRandomImage()   { return getRandom(remImages,   () => [...images]); }
-function getRandomVideo()   { return getRandom(remVideos,   () => [...videos]); }
-function getRandomMedia()   { return getRandom(remAll,      () => [...allMedia]); }
+
 function getRandomBhImage() { return getRandom(remBhImages, () => [...bhImages]); }
 function getRandomBhVideo() { return getRandom(remBhVideos, () => [...bhVideos]); }
 function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia]); }
- 
-// ── shared option builder so both commands stay identical ──────────────────
+
+// ── shared option builder ──────────────────────────────────────────────────
 function addSharedOptions(cmd) {
   return cmd
     .addStringOption(option =>
@@ -400,8 +374,8 @@ function addSharedOptions(cmd) {
         .setDescription('Where to send it (default: here in server)')
         .setRequired(false)
         .addChoices(
-          { name: 'Here (server)',  value: 'server' },
-          { name: 'DM',            value: 'dm' },
+          { name: 'Here (server)', value: 'server' },
+          { name: 'DM',           value: 'dm' },
         )
     )
     .addIntegerOption(option =>
@@ -419,14 +393,14 @@ function addSharedOptions(cmd) {
         .setRequired(false)
     );
 }
- 
+
 const commands = [
   addSharedOptions(new SlashCommandBuilder().setName('sr').setDescription('Sends random media')),
   addSharedOptions(new SlashCommandBuilder().setName('bh').setDescription('Sends random bh media')),
 ].map(cmd => cmd.toJSON());
- 
+
 const rest = new REST({ version: '10' }).setToken(TOKEN);
- 
+
 async function registerCommands() {
   try {
     console.log('Registering slash commands...');
@@ -436,17 +410,15 @@ async function registerCommands() {
     console.error(error);
   }
 }
- 
-// ── send helpers ───────────────────────────────────────────────────────────
- 
+
+// ── BH send helpers (URL-based, unchanged) ────────────────────────────────
 async function sendInServer(interaction, selected, isPrivate) {
-  // first item goes in the initial reply, rest as follow-ups
   await interaction.reply({ content: selected[0], ephemeral: isPrivate });
   for (let i = 1; i < selected.length; i++) {
     await interaction.followUp({ content: selected[i], ephemeral: isPrivate });
   }
 }
- 
+
 async function sendViaDM(interaction, selected) {
   try {
     await interaction.reply({ content: '📬 Sending to your DMs!', ephemeral: true });
@@ -457,45 +429,85 @@ async function sendViaDM(interaction, selected) {
     await interaction.editReply({ content: "❌ Couldn't DM you — make sure your DMs are open!" });
   }
 }
- 
-// ── main handler ───────────────────────────────────────────────────────────
- 
+
+// ── Client ─────────────────────────────────────────────────────────────────
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
- 
-client.once('ready', () => {
+
+client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}`);
+  await loadSrFiles();
 });
- 
+
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
- 
+
   const isSr = interaction.commandName === 'sr';
   const isBh = interaction.commandName === 'bh';
   if (!isSr && !isBh) return;
- 
+
   const type        = interaction.options.getString('type')        || 'random';
-  const destination = interaction.options.getString('destination') || 'server';  // default: server
+  const destination = interaction.options.getString('destination') || 'server';
   const amount      = interaction.options.getInteger('amount')     || 1;
   const isPrivate   = interaction.options.getBoolean('private')    ?? false;
- 
-  const getter = isSr
-    ? (type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia)
-    : (type === 'picture' ? getRandomBhImage : type === 'video' ? getRandomBhVideo : getRandomBhMedia);
- 
-  const pool = isSr
-    ? (type === 'picture' ? images : type === 'video' ? videos : allMedia)
-    : (type === 'picture' ? bhImages : type === 'video' ? bhVideos : bhAllMedia);
- 
+
+  // ── /sr — downloads from MEGA and sends as attachment ─────────────────
+  if (isSr) {
+    const pool = type === 'picture' ? srImages
+               : type === 'video'   ? srVideos
+               : srAll;
+
+    if (pool.length === 0) {
+      await interaction.reply({ content: '❌ No files loaded yet — try again in a moment.', ephemeral: true });
+      return;
+    }
+
+    // Defer since the download takes a moment
+    await interaction.deferReply({ ephemeral: isPrivate });
+
+    const picked = pickRandom(pool, amount);
+
+    try {
+      if (destination === 'dm') {
+        await interaction.editReply({ content: '📬 Sending to your DMs!' });
+        for (const file of picked) {
+          const buffer = await downloadBuffer(file);
+          await interaction.user.send({ files: [{ attachment: buffer, name: file.name }] });
+        }
+      } else {
+        // Send first file in the deferred reply, rest as follow-ups
+        const firstBuffer = await downloadBuffer(picked[0]);
+        await interaction.editReply({ files: [{ attachment: firstBuffer, name: picked[0].name }] });
+
+        for (let i = 1; i < picked.length; i++) {
+          const buffer = await downloadBuffer(picked[i]);
+          await interaction.followUp({ files: [{ attachment: buffer, name: picked[i].name }], ephemeral: isPrivate });
+        }
+      }
+    } catch (err) {
+      console.error('SR send error:', err);
+      await interaction.editReply({ content: '❌ Something went wrong — the file may be too large for Discord.' });
+    }
+    return;
+  }
+
+  // ── /bh — sends catbox URLs directly (unchanged behaviour) ────────────
+  const getter = type === 'picture' ? getRandomBhImage
+               : type === 'video'   ? getRandomBhVideo
+               : getRandomBhMedia;
+
+  const bhPool = type === 'picture' ? bhImages
+               : type === 'video'   ? bhVideos
+               : bhAllMedia;
+
   const selected = [];
-  for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
- 
+  for (let i = 0; i < Math.min(amount, bhPool.length); i++) selected.push(getter());
+
   if (destination === 'dm') {
     await sendViaDM(interaction, selected);
   } else {
     await sendInServer(interaction, selected, isPrivate);
   }
 });
- 
+
 registerCommands();
 client.login(TOKEN);
- 
