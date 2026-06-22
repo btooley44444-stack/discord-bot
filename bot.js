@@ -407,9 +407,9 @@ function addSharedOptions(cmd) {
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('How many to send (1–100)')
+        .setDescription('How many to send (1–10)')
         .setMinValue(1)
-        .setMaxValue(100)
+        .setMaxValue(10)
         .setRequired(false)
     )
     .addBooleanOption(option =>
