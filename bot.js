@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
-
+ 
 const images = [
   'https://i.ibb.co/YFvHXgVr/IMG-0367.jpg',
   'https://i.ibb.co/1JtfvJX2/IMG-0364.jpg',
@@ -54,7 +54,7 @@ const images = [
   'https://files.catbox.moe/qhxy08.jpg',
   'https://files.catbox.moe/p7fl7y.jpeg',
 ];
-
+ 
 const videos = [
   'https://files.catbox.moe/t3iytr.mp4',
   'https://files.catbox.moe/rqe6h6.mp4',
@@ -69,9 +69,8 @@ const videos = [
   'https://files.catbox.moe/cl05iu.m4v',
   'https://files.catbox.moe/7feudv.m4v',
 ];
-
+ 
 const bhImages = [
-  // original
   'https://files.catbox.moe/qdema8.jpg',
   'https://files.catbox.moe/e847jg.jpg',
   'https://files.catbox.moe/pbhccu.jpg',
@@ -106,7 +105,6 @@ const bhImages = [
   'https://files.catbox.moe/2ya3gc.jpg',
   'https://files.catbox.moe/8zh27d.jpg',
   'https://files.catbox.moe/sz207b.jpg',
-  // new
   'https://files.catbox.moe/nto6u9.jpg',
   'https://files.catbox.moe/earjuv.jpg',
   'https://files.catbox.moe/o6t55l.jpg',
@@ -305,7 +303,7 @@ const bhImages = [
   'https://files.catbox.moe/3qudil.jpg',
   'https://files.catbox.moe/uyhced.jpeg',
 ];
-
+ 
 const bhVideos = [
   'https://files.catbox.moe/haqyqc.mp4',
   'https://files.catbox.moe/4a4ezg.mp4',
@@ -346,34 +344,33 @@ const bhVideos = [
   'https://files.catbox.moe/zu4xf1.mp4',
   'https://files.catbox.moe/4duq9x.mov',
 ];
-
-const allMedia = [...images, ...videos];
+ 
+const allMedia   = [...images,   ...videos];
 const bhAllMedia = [...bhImages, ...bhVideos];
-
+ 
 let remImages   = [...images];
 let remVideos   = [...videos];
 let remAll      = [...allMedia];
 let remBhImages = [...bhImages];
 let remBhVideos = [...bhVideos];
 let remBhAll    = [...bhAllMedia];
-
+ 
 function getRandom(pool, reset) {
   if (pool.length === 0) pool.push(...reset());
   const index = Math.floor(Math.random() * pool.length);
   return pool.splice(index, 1)[0];
 }
-
+ 
 function getRandomImage()   { return getRandom(remImages,   () => [...images]); }
 function getRandomVideo()   { return getRandom(remVideos,   () => [...videos]); }
 function getRandomMedia()   { return getRandom(remAll,      () => [...allMedia]); }
 function getRandomBhImage() { return getRandom(remBhImages, () => [...bhImages]); }
 function getRandomBhVideo() { return getRandom(remBhVideos, () => [...bhVideos]); }
 function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia]); }
-
-const commands = [
-  new SlashCommandBuilder()
-    .setName('sr')
-    .setDescription('Sends random media')
+ 
+// ── shared option builder so both commands stay identical ──────────────────
+function addSharedOptions(cmd) {
+  return cmd
     .addStringOption(option =>
       option
         .setName('type')
@@ -385,10 +382,20 @@ const commands = [
           { name: 'Video',   value: 'video' },
         )
     )
+    .addStringOption(option =>
+      option
+        .setName('destination')
+        .setDescription('Where to send it (default: here in server)')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Here (server)',  value: 'server' },
+          { name: 'DM',            value: 'dm' },
+        )
+    )
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('How many to send (1-10)')
+        .setDescription('How many to send (1–10)')
         .setMinValue(1)
         .setMaxValue(10)
         .setRequired(false)
@@ -396,41 +403,18 @@ const commands = [
     .addBooleanOption(option =>
       option
         .setName('private')
-        .setDescription('Only you can see it (default: everyone can see)')
+        .setDescription('Only you can see it — only applies when sending in server (default: false)')
         .setRequired(false)
-    ),
-  new SlashCommandBuilder()
-    .setName('bh')
-    .setDescription('Sends random bh media')
-    .addStringOption(option =>
-      option
-        .setName('type')
-        .setDescription('What to send (default: random)')
-        .setRequired(false)
-        .addChoices(
-          { name: 'Random',  value: 'random' },
-          { name: 'Picture', value: 'picture' },
-          { name: 'Video',   value: 'video' },
-        )
-    )
-    .addIntegerOption(option =>
-      option
-        .setName('amount')
-        .setDescription('How many to send (1-100)')
-        .setMinValue(1)
-        .setMaxValue(100)
-        .setRequired(false)
-    )
-    .addBooleanOption(option =>
-      option
-        .setName('private')
-        .setDescription('Only you can see it (default: everyone can see)')
-        .setRequired(false)
-    ),
+    );
+}
+ 
+const commands = [
+  addSharedOptions(new SlashCommandBuilder().setName('sr').setDescription('Sends random media')),
+  addSharedOptions(new SlashCommandBuilder().setName('bh').setDescription('Sends random bh media')),
 ].map(cmd => cmd.toJSON());
-
+ 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
-
+ 
 async function registerCommands() {
   try {
     console.log('Registering slash commands...');
@@ -440,13 +424,17 @@ async function registerCommands() {
     console.error(error);
   }
 }
-
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
+ 
+// ── send helpers ───────────────────────────────────────────────────────────
+ 
+async function sendInServer(interaction, selected, isPrivate) {
+  // first item goes in the initial reply, rest as follow-ups
+  await interaction.reply({ content: selected[0], ephemeral: isPrivate });
+  for (let i = 1; i < selected.length; i++) {
+    await interaction.followUp({ content: selected[i], ephemeral: isPrivate });
+  }
+}
+ 
 async function sendViaDM(interaction, selected) {
   try {
     await interaction.reply({ content: '📬 Sending to your DMs!', ephemeral: true });
@@ -454,33 +442,48 @@ async function sendViaDM(interaction, selected) {
       await interaction.user.send(item);
     }
   } catch {
-    await interaction.editReply({ content: '❌ Couldn\'t DM you — make sure your DMs are open!' });
+    await interaction.editReply({ content: "❌ Couldn't DM you — make sure your DMs are open!" });
   }
 }
-
+ 
+// ── main handler ───────────────────────────────────────────────────────────
+ 
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+ 
+client.once('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
+});
+ 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === 'sr') {
-    const type   = interaction.options.getString('type') || 'random';
-    const amount = interaction.options.getInteger('amount') || 1;
-    const pool   = type === 'picture' ? images : type === 'video' ? videos : allMedia;
-    const getter = type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia;
-    const selected = [];
-    for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
+ 
+  const isSr = interaction.commandName === 'sr';
+  const isBh = interaction.commandName === 'bh';
+  if (!isSr && !isBh) return;
+ 
+  const type        = interaction.options.getString('type')        || 'random';
+  const destination = interaction.options.getString('destination') || 'server';  // default: server
+  const amount      = interaction.options.getInteger('amount')     || 1;
+  const isPrivate   = interaction.options.getBoolean('private')    ?? false;
+ 
+  const getter = isSr
+    ? (type === 'picture' ? getRandomImage : type === 'video' ? getRandomVideo : getRandomMedia)
+    : (type === 'picture' ? getRandomBhImage : type === 'video' ? getRandomBhVideo : getRandomBhMedia);
+ 
+  const pool = isSr
+    ? (type === 'picture' ? images : type === 'video' ? videos : allMedia)
+    : (type === 'picture' ? bhImages : type === 'video' ? bhVideos : bhAllMedia);
+ 
+  const selected = [];
+  for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
+ 
+  if (destination === 'dm') {
     await sendViaDM(interaction, selected);
-  }
-
-  if (interaction.commandName === 'bh') {
-    const type   = interaction.options.getString('type') || 'random';
-    const amount = interaction.options.getInteger('amount') || 1;
-    const pool   = type === 'picture' ? bhImages : type === 'video' ? bhVideos : bhAllMedia;
-    const getter = type === 'picture' ? getRandomBhImage : type === 'video' ? getRandomBhVideo : getRandomBhMedia;
-    const selected = [];
-    for (let i = 0; i < Math.min(amount, pool.length); i++) selected.push(getter());
-    await sendViaDM(interaction, selected);
+  } else {
+    await sendInServer(interaction, selected, isPrivate);
   }
 });
-
+ 
 registerCommands();
 client.login(TOKEN);
+ 
