@@ -460,16 +460,30 @@ client.on('interactionCreate', async interaction => {
     const picked = pickRandom(srAll, amount);
 
     try {
-      // Download all files in parallel instead of one at a time
-      const buffers = await Promise.all(
+      // Download all files in parallel; skip any that fail instead of crashing
+      const results = await Promise.allSettled(
         picked.map(file =>
           downloadBuffer(file).then(buffer => ({ attachment: buffer, name: file.name }))
         )
       );
 
+      const buffers = results
+        .filter((r, i) => {
+          if (r.status === 'rejected') {
+            console.error(`Failed to download ${picked[i].name}:`, r.reason);
+            return false;
+          }
+          return true;
+        })
+        .map(r => r.value);
+
+      if (buffers.length === 0) {
+        await interaction.editReply({ content: '❌ All files failed to download — check the console for details.' });
+        return;
+      }
+
       if (destination === 'dm') {
         await interaction.editReply({ content: '📬 Sending to your DMs!' });
-        // Send in batches of 10 (Discord's per-message attachment limit)
         for (let i = 0; i < buffers.length; i += 10) {
           await interaction.user.send({ files: buffers.slice(i, i + 10) });
         }
@@ -481,8 +495,8 @@ client.on('interactionCreate', async interaction => {
         }
       }
     } catch (err) {
-      console.error('SR send error:', err);
-      await interaction.editReply({ content: '❌ Something went wrong — the file may be too large for Discord.' });
+      console.error('SR send error:', err.message, err.stack);
+      await interaction.editReply({ content: `❌ Something went wrong: ${err.message}` });
     }
     return;
   }
