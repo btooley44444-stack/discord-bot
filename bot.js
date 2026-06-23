@@ -3,7 +3,8 @@ const { File } = require('megajs');
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
-const MEGA_FOLDER = 'https://mega.nz/folder/DmRAhBjZ#QnVdilMScaUwF-ZbnF2xog';
+const MEGA_FOLDER    = 'https://mega.nz/folder/DmRAhBjZ#QnVdilMScaUwF-ZbnF2xog';
+const BH_MEGA_FOLDER = 'https://mega.nz/folder/JjJE3BpK#EUO5aFLPJ7MwTo363iqIUQ';
 
 // ── MEGA / SR setup ────────────────────────────────────────────────────────
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB — Discord's upload limit
@@ -84,297 +85,51 @@ function pickWeighted(count) {
   return out;
 }
 
-// ── BH arrays (unchanged) ─────────────────────────────────────────────────
-const bhImages = [
-  'https://files.catbox.moe/qdema8.jpg',
-  'https://files.catbox.moe/e847jg.jpg',
-  'https://files.catbox.moe/pbhccu.jpg',
-  'https://files.catbox.moe/7hgd31.jpg',
-  'https://files.catbox.moe/d00kkd.jpg',
-  'https://files.catbox.moe/ick0pr.jpg',
-  'https://files.catbox.moe/wcvxk4.jpg',
-  'https://files.catbox.moe/1p2ddm.jpg',
-  'https://files.catbox.moe/npuer5.png',
-  'https://files.catbox.moe/orrjum.jpg',
-  'https://files.catbox.moe/bl3gvy.png',
-  'https://files.catbox.moe/awlwp7.jpg',
-  'https://files.catbox.moe/2w47ua.jpg',
-  'https://files.catbox.moe/00oj9s.png',
-  'https://files.catbox.moe/tj6l7r.png',
-  'https://files.catbox.moe/pl2a8g.png',
-  'https://files.catbox.moe/spy0zw.png',
-  'https://files.catbox.moe/w01ehz.png',
-  'https://files.catbox.moe/eo1ips.png',
-  'https://files.catbox.moe/t37xxy.png',
-  'https://files.catbox.moe/72sibd.png',
-  'https://files.catbox.moe/j4k49y.png',
-  'https://files.catbox.moe/knzzn8.jpg',
-  'https://files.catbox.moe/co2xrm.jpg',
-  'https://files.catbox.moe/0traez.jpg',
-  'https://files.catbox.moe/q5v6iv.jpg',
-  'https://files.catbox.moe/9nkkh0.jpg',
-  'https://files.catbox.moe/a9k48z.jpg',
-  'https://files.catbox.moe/8dsbia.jpg',
-  'https://files.catbox.moe/v10ypi.jpg',
-  'https://files.catbox.moe/rgs3f9.jpg',
-  'https://files.catbox.moe/2ya3gc.jpg',
-  'https://files.catbox.moe/8zh27d.jpg',
-  'https://files.catbox.moe/sz207b.jpg',
-  'https://files.catbox.moe/nto6u9.jpg',
-  'https://files.catbox.moe/earjuv.jpg',
-  'https://files.catbox.moe/o6t55l.jpg',
-  'https://files.catbox.moe/qn39af.jpg',
-  'https://files.catbox.moe/n8n5br.jpg',
-  'https://files.catbox.moe/hwjad8.jpg',
-  'https://files.catbox.moe/2crn72.jpg',
-  'https://files.catbox.moe/oxcqvq.jpg',
-  'https://files.catbox.moe/bzwzw7.jpg',
-  'https://files.catbox.moe/ich6l0.jpg',
-  'https://files.catbox.moe/djlufm.jpg',
-  'https://files.catbox.moe/7wod9i.jpg',
-  'https://files.catbox.moe/d8b5z0.jpg',
-  'https://files.catbox.moe/m4tj12.jpg',
-  'https://files.catbox.moe/r81mgw.jpg',
-  'https://files.catbox.moe/u3hdpg.jpg',
-  'https://files.catbox.moe/2qvnq2.jpg',
-  'https://files.catbox.moe/jgdoy6.jpg',
-  'https://files.catbox.moe/f2g7dc.jpg',
-  'https://files.catbox.moe/8efwei.jpg',
-  'https://files.catbox.moe/4cktb0.jpg',
-  'https://files.catbox.moe/dd0gq3.jpg',
-  'https://files.catbox.moe/7v5cfn.jpg',
-  'https://files.catbox.moe/1kih2z.jpg',
-  'https://files.catbox.moe/62txsx.jpg',
-  'https://files.catbox.moe/869pq3.jpg',
-  'https://files.catbox.moe/6313k5.jpg',
-  'https://files.catbox.moe/cv697x.jpg',
-  'https://files.catbox.moe/ao2fk2.jpg',
-  'https://files.catbox.moe/5p6fli.jpg',
-  'https://files.catbox.moe/ow5rf1.jpg',
-  'https://files.catbox.moe/tuqzxn.jpg',
-  'https://files.catbox.moe/t3ycag.jpg',
-  'https://files.catbox.moe/ktz82j.jpg',
-  'https://files.catbox.moe/fkme4q.jpg',
-  'https://files.catbox.moe/d0q1y6.jpg',
-  'https://files.catbox.moe/mezk4x.jpg',
-  'https://files.catbox.moe/1m71ax.jpg',
-  'https://files.catbox.moe/wuewxe.jpg',
-  'https://files.catbox.moe/3guatf.jpg',
-  'https://files.catbox.moe/8qk2w5.jpg',
-  'https://files.catbox.moe/89i2qc.jpg',
-  'https://files.catbox.moe/637joj.jpg',
-  'https://files.catbox.moe/kkqdkb.jpg',
-  'https://files.catbox.moe/aufel5.jpg',
-  'https://files.catbox.moe/unpoqx.jpg',
-  'https://files.catbox.moe/cywva5.jpg',
-  'https://files.catbox.moe/jxztae.jpg',
-  'https://files.catbox.moe/vvuo5f.jpg',
-  'https://files.catbox.moe/2qebfg.jpg',
-  'https://files.catbox.moe/mqqjv3.jpg',
-  'https://files.catbox.moe/lffr38.jpg',
-  'https://files.catbox.moe/6ndakz.jpg',
-  'https://files.catbox.moe/6358n3.jpg',
-  'https://files.catbox.moe/j6xk9p.jpg',
-  'https://files.catbox.moe/p2cead.jpg',
-  'https://files.catbox.moe/lnori7.jpg',
-  'https://files.catbox.moe/3w2y0k.jpg',
-  'https://files.catbox.moe/zhwl8o.jpg',
-  'https://files.catbox.moe/2o4ktk.jpg',
-  'https://files.catbox.moe/ghjvhc.jpg',
-  'https://files.catbox.moe/28njyz.jpg',
-  'https://files.catbox.moe/cvwg06.jpg',
-  'https://files.catbox.moe/ts8npf.jpg',
-  'https://files.catbox.moe/g8471b.jpg',
-  'https://files.catbox.moe/l6apo7.jpg',
-  'https://files.catbox.moe/mok45y.jpg',
-  'https://files.catbox.moe/im69v4.jpg',
-  'https://files.catbox.moe/ozgpj2.jpg',
-  'https://files.catbox.moe/2pqu94.jpg',
-  'https://files.catbox.moe/mpy6ye.jpg',
-  'https://files.catbox.moe/e5oq7c.jpg',
-  'https://files.catbox.moe/emqb52.jpg',
-  'https://files.catbox.moe/s69820.jpg',
-  'https://files.catbox.moe/xwzhnv.jpg',
-  'https://files.catbox.moe/b8desi.jpg',
-  'https://files.catbox.moe/3reoy7.jpg',
-  'https://files.catbox.moe/y8fw13.jpg',
-  'https://files.catbox.moe/9xbccu.jpg',
-  'https://files.catbox.moe/xyr40b.jpg',
-  'https://files.catbox.moe/do032s.jpg',
-  'https://files.catbox.moe/sy3h7t.jpg',
-  'https://files.catbox.moe/4pc3nz.jpg',
-  'https://files.catbox.moe/66ftwc.jpg',
-  'https://files.catbox.moe/3730rg.jpg',
-  'https://files.catbox.moe/bzpu5b.jpg',
-  'https://files.catbox.moe/4tk5uh.jpg',
-  'https://files.catbox.moe/i9hxgb.jpg',
-  'https://files.catbox.moe/zjxf6g.jpg',
-  'https://files.catbox.moe/rp8hh4.jpg',
-  'https://files.catbox.moe/2ylr9a.jpg',
-  'https://files.catbox.moe/qcjin7.jpg',
-  'https://files.catbox.moe/72kdbw.jpg',
-  'https://files.catbox.moe/ij21m0.jpg',
-  'https://files.catbox.moe/ylzpab.jpg',
-  'https://files.catbox.moe/4rxemq.jpg',
-  'https://files.catbox.moe/47h07s.jpg',
-  'https://files.catbox.moe/iz8qhf.jpg',
-  'https://files.catbox.moe/3jofid.jpg',
-  'https://files.catbox.moe/uw3fvu.jpg',
-  'https://files.catbox.moe/82ai37.jpg',
-  'https://files.catbox.moe/cg35l3.jpg',
-  'https://files.catbox.moe/amoaj3.jpg',
-  'https://files.catbox.moe/ihmmjq.jpg',
-  'https://files.catbox.moe/nfm4yg.jpg',
-  'https://files.catbox.moe/ye0rn9.jpg',
-  'https://files.catbox.moe/a8dfaf.jpg',
-  'https://files.catbox.moe/aiay09.jpg',
-  'https://files.catbox.moe/ir4ccm.jpg',
-  'https://files.catbox.moe/yzzevz.jpg',
-  'https://files.catbox.moe/0sfcve.jpg',
-  'https://files.catbox.moe/liu3io.jpg',
-  'https://files.catbox.moe/tmbxmd.jpg',
-  'https://files.catbox.moe/84o2z9.jpg',
-  'https://files.catbox.moe/f4and0.jpg',
-  'https://files.catbox.moe/gnuk5u.jpg',
-  'https://files.catbox.moe/bmqkvq.jpg',
-  'https://files.catbox.moe/cc9wtx.jpg',
-  'https://files.catbox.moe/wuji3a.jpg',
-  'https://files.catbox.moe/mchiwd.jpg',
-  'https://files.catbox.moe/hvdxqi.jpg',
-  'https://files.catbox.moe/41yja4.jpg',
-  'https://files.catbox.moe/3i2dfm.jpg',
-  'https://files.catbox.moe/e7ewpv.jpg',
-  'https://files.catbox.moe/dhs7q3.jpg',
-  'https://files.catbox.moe/l1c915.jpg',
-  'https://files.catbox.moe/e7499b.jpg',
-  'https://files.catbox.moe/s12v1r.jpg',
-  'https://files.catbox.moe/s18unz.jpg',
-  'https://files.catbox.moe/ryno49.jpg',
-  'https://files.catbox.moe/ste2p9.jpg',
-  'https://files.catbox.moe/pt0109.jpg',
-  'https://files.catbox.moe/gapzty.jpg',
-  'https://files.catbox.moe/2l9m5j.jpg',
-  'https://files.catbox.moe/47b20h.jpg',
-  'https://files.catbox.moe/99du0o.jpg',
-  'https://files.catbox.moe/in8d04.jpg',
-  'https://files.catbox.moe/7dgvfg.jpg',
-  'https://files.catbox.moe/jfvxeb.jpg',
-  'https://files.catbox.moe/3xdq6x.jpg',
-  'https://files.catbox.moe/jkw3vb.jpg',
-  'https://files.catbox.moe/77p2x0.jpg',
-  'https://files.catbox.moe/9nd71r.jpg',
-  'https://files.catbox.moe/zy098v.jpeg',
-  'https://files.catbox.moe/l3jqvw.jpg',
-  'https://files.catbox.moe/7mqg5x.jpeg',
-  'https://files.catbox.moe/envx7s.jpg',
-  'https://files.catbox.moe/3i9zz9.jpeg',
-  'https://files.catbox.moe/gis234.jpg',
-  'https://files.catbox.moe/lvkn2l.jpg',
-  'https://files.catbox.moe/jmlg9y.jpeg',
-  'https://files.catbox.moe/u3r4i8.jpeg',
-  'https://files.catbox.moe/qyn0om.jpg',
-  'https://files.catbox.moe/ts3tjh.png',
-  'https://files.catbox.moe/u90fwe.jpeg',
-  'https://files.catbox.moe/mqfknh.jpg',
-  'https://files.catbox.moe/jytn96.jpg',
-  'https://files.catbox.moe/re53y8.png',
-  'https://files.catbox.moe/qqj67y.jpeg',
-  'https://files.catbox.moe/cvmygy.png',
-  'https://files.catbox.moe/bdhfex.jpeg',
-  'https://files.catbox.moe/qnyf22.jpg',
-  'https://files.catbox.moe/8hd4m0.PNG',
-  'https://files.catbox.moe/iq1yft.jpeg',
-  'https://files.catbox.moe/jjoejz.jpg',
-  'https://files.catbox.moe/urnr7u.jpg',
-  'https://files.catbox.moe/wql2fx.PNG',
-  'https://files.catbox.moe/jj7jqi.jpeg',
-  'https://files.catbox.moe/micj8v.jpg',
-  'https://files.catbox.moe/av8bz8.jpeg',
-  'https://files.catbox.moe/9qv9kl.PNG',
-  'https://files.catbox.moe/gnoo5w.jpg',
-  'https://files.catbox.moe/j2qnn4.jpeg',
-  'https://files.catbox.moe/esp96n.PNG',
-  'https://files.catbox.moe/tukkim.PNG',
-  'https://files.catbox.moe/zbxqpc.jpg',
-  'https://files.catbox.moe/nkgt5k.jpeg',
-  'https://files.catbox.moe/e9985b.PNG',
-  'https://files.catbox.moe/5bb956.jpg',
-  'https://files.catbox.moe/t80ysu.jpeg',
-  'https://files.catbox.moe/ar4kr1.jpeg',
-  'https://files.catbox.moe/9rax01.png',
-  'https://files.catbox.moe/iye3m7.jpg',
-  'https://files.catbox.moe/ic2uig.jpg',
-  'https://files.catbox.moe/50slpl.png',
-  'https://files.catbox.moe/xgr8ww.jpeg',
-  'https://files.catbox.moe/1nutio.png',
-  'https://files.catbox.moe/83bbgf.png',
-  'https://files.catbox.moe/beomtz.jpeg',
-  'https://files.catbox.moe/9ppz3v.jpg',
-  'https://files.catbox.moe/bgr4ey.PNG',
-  'https://files.catbox.moe/u0y0ib.jpeg',
-  'https://files.catbox.moe/p4g4ew.jpg',
-  'https://files.catbox.moe/xv2u0b.jpg',
-  'https://files.catbox.moe/bd3p5b.jpeg',
-  'https://files.catbox.moe/3qudil.jpg',
-  'https://files.catbox.moe/uyhced.jpeg',
-];
+// ── BH MEGA setup ────────────────────────────────────────────────────────
+let bhAll    = [];
+let bhImages = [];
+let bhVideos = [];
 
-const bhVideos = [
-  'https://files.catbox.moe/haqyqc.mp4',
-  'https://files.catbox.moe/4a4ezg.mp4',
-  'https://files.catbox.moe/vet3hg.mp4',
-  'https://files.catbox.moe/emjp2r.mp4',
-  'https://files.catbox.moe/tpr8wg.mp4',
-  'https://files.catbox.moe/ob1p7j.mp4',
-  'https://files.catbox.moe/c8ohy0.mp4',
-  'https://files.catbox.moe/dn06qe.mp4',
-  'https://files.catbox.moe/t3xg6l.mp4',
-  'https://files.catbox.moe/uxs2i2.mp4',
-  'https://files.catbox.moe/fejtjs.mp4',
-  'https://files.catbox.moe/724jdv.mp4',
-  'https://files.catbox.moe/jndwli.mp4',
-  'https://files.catbox.moe/ox6gk4.mp4',
-  'https://files.catbox.moe/o6rwil.mp4',
-  'https://files.catbox.moe/s3bygp.mp4',
-  'https://files.catbox.moe/6gppcg.mp4',
-  'https://files.catbox.moe/ci8d0p.mp4',
-  'https://files.catbox.moe/930nk7.mp4',
-  'https://files.catbox.moe/vaght7.mp4',
-  'https://files.catbox.moe/6a5dcd.mp4',
-  'https://files.catbox.moe/hrbbnt.mp4',
-  'https://files.catbox.moe/vybykc.mp4',
-  'https://files.catbox.moe/455tw2.mp4',
-  'https://files.catbox.moe/eg8pw3.mp4',
-  'https://files.catbox.moe/f484vj.mp4',
-  'https://files.catbox.moe/oc1upm.m4v',
-  'https://files.catbox.moe/1selbx.mp4',
-  'https://files.catbox.moe/5jpztm.mp4',
-  'https://files.catbox.moe/vcvavi.mp4',
-  'https://files.catbox.moe/nvdo6z.mp4',
-  'https://files.catbox.moe/skx1ne.mov',
-  'https://files.catbox.moe/seubon.mp4',
-  'https://files.catbox.moe/32q2uf.mov',
-  'https://files.catbox.moe/ryz0yi.mp4',
-  'https://files.catbox.moe/kvd10s.mov',
-  'https://files.catbox.moe/zu4xf1.mp4',
-  'https://files.catbox.moe/4duq9x.mov',
-];
+async function loadBhFiles() {
+  try {
+    console.log('Loading /bh files from MEGA...');
+    const folder = File.fromURL(BH_MEGA_FOLDER);
+    await folder.loadAttributes();
 
-const bhAllMedia = [...bhImages, ...bhVideos];
+    for (const file of folder.children) {
+      if (file.directory) continue;
+      if (file.size > MAX_FILE_SIZE) {
+        console.log(`[bh] Skipping ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB — over 25 MB limit)`);
+        continue;
+      }
+      const ext = getExt(file.name);
+      if (MEDIA_EXTS.has(ext)) {
+        bhAll.push(file);
+        if (VIDEO_EXTS.has(ext)) bhVideos.push(file);
+        else bhImages.push(file);
+      }
+    }
 
-let remBhImages = [...bhImages];
-let remBhVideos = [...bhVideos];
-let remBhAll    = [...bhAllMedia];
-
-function getRandom(pool, reset) {
-  if (pool.length === 0) pool.push(...reset());
-  const index = Math.floor(Math.random() * pool.length);
-  return pool.splice(index, 1)[0];
+    console.log(`/bh ready: ${bhAll.length} files loaded (${bhImages.length} images, ${bhVideos.length} videos)`);
+  } catch (err) {
+    console.error('MEGA /bh load error:', err);
+  }
 }
 
-function getRandomBhImage() { return getRandom(remBhImages, () => [...bhImages]); }
-function getRandomBhVideo() { return getRandom(remBhVideos, () => [...bhVideos]); }
-function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia]); }
+function pickBhWeighted(count) {
+  const imgCopy = [...bhImages];
+  const vidCopy = [...bhVideos];
+  const out = [];
+  const total = Math.min(count, bhAll.length);
+
+  for (let i = 0; i < total; i++) {
+    const wantVideo = Math.random() < VIDEO_WEIGHT && vidCopy.length > 0;
+    const pool = (wantVideo || imgCopy.length === 0) ? vidCopy : imgCopy;
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
 
 // ── option builders ────────────────────────────────────────────────────────
 function addBaseOptions(cmd) {
@@ -438,31 +193,12 @@ async function registerCommands() {
   }
 }
 
-// ── BH send helpers (URL-based, unchanged) ────────────────────────────────
-async function sendInServer(interaction, selected, isPrivate) {
-  await interaction.reply({ content: selected[0], ephemeral: isPrivate });
-  for (let i = 1; i < selected.length; i++) {
-    await interaction.followUp({ content: selected[i], ephemeral: isPrivate });
-  }
-}
-
-async function sendViaDM(interaction, selected) {
-  try {
-    await interaction.reply({ content: '📬 Sending to your DMs!', ephemeral: true });
-    for (const item of selected) {
-      await interaction.user.send(item);
-    }
-  } catch {
-    await interaction.editReply({ content: "❌ Couldn't DM you — make sure your DMs are open!" });
-  }
-}
-
 // ── Client ─────────────────────────────────────────────────────────────────
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}`);
-  await loadSrFiles();
+  await Promise.all([loadSrFiles(), loadBhFiles()]);
 });
 
 client.on('interactionCreate', async interaction => {
@@ -539,24 +275,68 @@ client.on('interactionCreate', async interaction => {
     return;
   }
 
-  // ── /bh — sends catbox URLs directly (unchanged behaviour) ────────────
-  const bhType = interaction.options.getString('type') || 'random';
+  // ── /bh — downloads from MEGA and sends as attachment ───────────────────
+  if (bhAll.length === 0) {
+    await interaction.reply({ content: '❌ No /bh files loaded yet — try again in a moment.', ephemeral: true });
+    return;
+  }
 
-  const getter = bhType === 'picture' ? getRandomBhImage
-               : bhType === 'video'   ? getRandomBhVideo
-               : getRandomBhMedia;
+  await interaction.deferReply({ ephemeral: isPrivate });
 
-  const bhPool = bhType === 'picture' ? bhImages
-               : bhType === 'video'   ? bhVideos
-               : bhAllMedia;
-
-  const selected = [];
-  for (let i = 0; i < Math.min(amount, bhPool.length); i++) selected.push(getter());
-
-  if (destination === 'dm') {
-    await sendViaDM(interaction, selected);
+  const bhType  = interaction.options.getString('type') || 'random';
+  let picked;
+  if (bhType === 'picture') {
+    picked = pickRandom([...bhImages], amount);
+  } else if (bhType === 'video') {
+    picked = pickRandom([...bhVideos], amount);
   } else {
-    await sendInServer(interaction, selected, isPrivate);
+    picked = pickBhWeighted(amount);
+  }
+
+  try {
+    const BATCH = 10;
+    let batch = [];
+    let firstSent = false;
+
+    const send = async (files) => {
+      if (destination === 'dm') {
+        if (!firstSent) {
+          await interaction.editReply({ content: '📬 Sending to your DMs!' });
+          firstSent = true;
+        }
+        await interaction.user.send({ files });
+      } else {
+        if (!firstSent) {
+          await interaction.editReply({ files });
+          firstSent = true;
+        } else {
+          await interaction.followUp({ files, ephemeral: isPrivate });
+        }
+      }
+    };
+
+    await Promise.all(
+      picked.map(file =>
+        downloadBuffer(file)
+          .then(async buffer => {
+            batch.push({ attachment: buffer, name: file.name });
+            if (batch.length >= BATCH) {
+              const toSend = batch.splice(0, BATCH);
+              await send(toSend);
+            }
+          })
+          .catch(err => console.error(`[bh] Failed to download ${file.name}:`, err.message))
+      )
+    );
+
+    if (batch.length > 0) await send(batch);
+
+    if (!firstSent) {
+      await interaction.editReply({ content: '❌ All files failed to download — check the console for details.' });
+    }
+  } catch (err) {
+    console.error('BH send error:', err.message, err.stack);
+    await interaction.editReply({ content: `❌ Something went wrong: ${err.message}` });
   }
 });
 
