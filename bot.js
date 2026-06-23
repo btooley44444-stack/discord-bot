@@ -3,16 +3,13 @@ const { File } = require('megajs');
 
 const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
 const CLIENT_ID = '1505282612334301224';
-const MEGA_FOLDER = 'https://mega.nz/folder/hVhAkK6Y#3flyISKl_JdbtowhFlLerA';
+const MEGA_FOLDER = 'https://mega.nz/folder/DmRAhBjZ#QnVdilMScaUwF-ZbnF2xog';
 
 // ── MEGA / SR setup ────────────────────────────────────────────────────────
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB — Discord's upload limit
-const IMAGE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp']);
-const VIDEO_EXTS = new Set(['.mp4', '.mov', '.m4v', '.webm']);
+const MEDIA_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.m4v', '.webm']);
 
-let srImages = [];
-let srVideos = [];
-let srAll    = [];
+let srAll = [];
 
 function getExt(name) {
   return name.slice(name.lastIndexOf('.')).toLowerCase();
@@ -30,13 +27,10 @@ async function loadSrFiles() {
         console.log(`Skipping ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB — over 25 MB limit)`);
         continue;
       }
-      const ext = getExt(file.name);
-      if (IMAGE_EXTS.has(ext))      srImages.push(file);
-      else if (VIDEO_EXTS.has(ext)) srVideos.push(file);
+      if (MEDIA_EXTS.has(getExt(file.name))) srAll.push(file);
     }
 
-    srAll = [...srImages, ...srVideos];
-    console.log(`/sr ready: ${srImages.length} images, ${srVideos.length} videos`);
+    console.log(`/sr ready: ${srAll.length} files loaded`);
   } catch (err) {
     console.error('MEGA load error:', err);
   }
@@ -354,20 +348,10 @@ function getRandomBhImage() { return getRandom(remBhImages, () => [...bhImages])
 function getRandomBhVideo() { return getRandom(remBhVideos, () => [...bhVideos]); }
 function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia]); }
 
-// ── shared option builder ──────────────────────────────────────────────────
-function addSharedOptions(cmd) {
+// ── option builders ────────────────────────────────────────────────────────
+function addBaseOptions(cmd) {
+  // destination, amount, private — shared by both commands
   return cmd
-    .addStringOption(option =>
-      option
-        .setName('type')
-        .setDescription('What to send (default: random)')
-        .setRequired(false)
-        .addChoices(
-          { name: 'Random',  value: 'random' },
-          { name: 'Picture', value: 'picture' },
-          { name: 'Video',   value: 'video' },
-        )
-    )
     .addStringOption(option =>
       option
         .setName('destination')
@@ -381,9 +365,9 @@ function addSharedOptions(cmd) {
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('How many to send (1–10)')
+        .setDescription('How many to send (1–150)')
         .setMinValue(1)
-        .setMaxValue(10)
+        .setMaxValue(150)
         .setRequired(false)
     )
     .addBooleanOption(option =>
@@ -394,9 +378,26 @@ function addSharedOptions(cmd) {
     );
 }
 
+function addBhOptions(cmd) {
+  // /bh keeps the type option too
+  return addBaseOptions(
+    cmd.addStringOption(option =>
+      option
+        .setName('type')
+        .setDescription('What to send (default: random)')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Random',  value: 'random' },
+          { name: 'Picture', value: 'picture' },
+          { name: 'Video',   value: 'video' },
+        )
+    )
+  );
+}
+
 const commands = [
-  addSharedOptions(new SlashCommandBuilder().setName('sr').setDescription('Sends random media')),
-  addSharedOptions(new SlashCommandBuilder().setName('bh').setDescription('Sends random bh media')),
+  addBaseOptions(new SlashCommandBuilder().setName('sr').setDescription('Sends random media')),
+  addBhOptions(new SlashCommandBuilder().setName('bh').setDescription('Sends random bh media')),
 ].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -445,18 +446,13 @@ client.on('interactionCreate', async interaction => {
   const isBh = interaction.commandName === 'bh';
   if (!isSr && !isBh) return;
 
-  const type        = interaction.options.getString('type')        || 'random';
   const destination = interaction.options.getString('destination') || 'server';
   const amount      = interaction.options.getInteger('amount')     || 1;
   const isPrivate   = interaction.options.getBoolean('private')    ?? false;
 
   // ── /sr — downloads from MEGA and sends as attachment ─────────────────
   if (isSr) {
-    const pool = type === 'picture' ? srImages
-               : type === 'video'   ? srVideos
-               : srAll;
-
-    if (pool.length === 0) {
+    if (srAll.length === 0) {
       await interaction.reply({ content: '❌ No files loaded yet — try again in a moment.', ephemeral: true });
       return;
     }
@@ -464,7 +460,7 @@ client.on('interactionCreate', async interaction => {
     // Defer since the download takes a moment
     await interaction.deferReply({ ephemeral: isPrivate });
 
-    const picked = pickRandom(pool, amount);
+    const picked = pickRandom(srAll, amount);
 
     try {
       if (destination === 'dm') {
@@ -491,12 +487,14 @@ client.on('interactionCreate', async interaction => {
   }
 
   // ── /bh — sends catbox URLs directly (unchanged behaviour) ────────────
-  const getter = type === 'picture' ? getRandomBhImage
-               : type === 'video'   ? getRandomBhVideo
+  const bhType = interaction.options.getString('type') || 'random';
+
+  const getter = bhType === 'picture' ? getRandomBhImage
+               : bhType === 'video'   ? getRandomBhVideo
                : getRandomBhMedia;
 
-  const bhPool = type === 'picture' ? bhImages
-               : type === 'video'   ? bhVideos
+  const bhPool = bhType === 'picture' ? bhImages
+               : bhType === 'video'   ? bhVideos
                : bhAllMedia;
 
   const selected = [];
