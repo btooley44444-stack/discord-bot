@@ -350,7 +350,6 @@ function getRandomBhMedia() { return getRandom(remBhAll,    () => [...bhAllMedia
 
 // ── option builders ────────────────────────────────────────────────────────
 function addBaseOptions(cmd) {
-  // destination, amount, private — shared by both commands
   return cmd
     .addStringOption(option =>
       option
@@ -379,7 +378,6 @@ function addBaseOptions(cmd) {
 }
 
 function addBhOptions(cmd) {
-  // /bh keeps the type option too
   return addBaseOptions(
     cmd.addStringOption(option =>
       option
@@ -457,26 +455,29 @@ client.on('interactionCreate', async interaction => {
       return;
     }
 
-    // Defer since the download takes a moment
     await interaction.deferReply({ ephemeral: isPrivate });
 
     const picked = pickRandom(srAll, amount);
 
     try {
+      // Download all files in parallel instead of one at a time
+      const buffers = await Promise.all(
+        picked.map(file =>
+          downloadBuffer(file).then(buffer => ({ attachment: buffer, name: file.name }))
+        )
+      );
+
       if (destination === 'dm') {
         await interaction.editReply({ content: '📬 Sending to your DMs!' });
-        for (const file of picked) {
-          const buffer = await downloadBuffer(file);
-          await interaction.user.send({ files: [{ attachment: buffer, name: file.name }] });
+        // Send in batches of 10 (Discord's per-message attachment limit)
+        for (let i = 0; i < buffers.length; i += 10) {
+          await interaction.user.send({ files: buffers.slice(i, i + 10) });
         }
       } else {
-        // Send first file in the deferred reply, rest as follow-ups
-        const firstBuffer = await downloadBuffer(picked[0]);
-        await interaction.editReply({ files: [{ attachment: firstBuffer, name: picked[0].name }] });
-
-        for (let i = 1; i < picked.length; i++) {
-          const buffer = await downloadBuffer(picked[i]);
-          await interaction.followUp({ files: [{ attachment: buffer, name: picked[i].name }], ephemeral: isPrivate });
+        // First batch goes in the deferred reply, rest as follow-ups
+        await interaction.editReply({ files: buffers.slice(0, 10) });
+        for (let i = 10; i < buffers.length; i += 10) {
+          await interaction.followUp({ files: buffers.slice(i, i + 10), ephemeral: isPrivate });
         }
       }
     } catch (err) {
