@@ -488,39 +488,49 @@ client.on('interactionCreate', async interaction => {
     const picked = pickWeighted(amount);
 
     try {
-      // Download all files in parallel; skip any that fail instead of crashing
-      const results = await Promise.allSettled(
+      // Build a batch as soon as enough files are ready, then send it immediately
+      // instead of waiting for every download to finish first.
+      const BATCH = 10;
+      let batch = [];
+      let firstSent = false;
+
+      const send = async (files) => {
+        if (destination === 'dm') {
+          if (!firstSent) {
+            await interaction.editReply({ content: '📬 Sending to your DMs!' });
+            firstSent = true;
+          }
+          await interaction.user.send({ files });
+        } else {
+          if (!firstSent) {
+            await interaction.editReply({ files });
+            firstSent = true;
+          } else {
+            await interaction.followUp({ files, ephemeral: isPrivate });
+          }
+        }
+      };
+
+      // Kick off all downloads at once; send each batch the moment it fills up
+      await Promise.all(
         picked.map(file =>
-          downloadBuffer(file).then(buffer => ({ attachment: buffer, name: file.name }))
+          downloadBuffer(file)
+            .then(async buffer => {
+              batch.push({ attachment: buffer, name: file.name });
+              if (batch.length >= BATCH) {
+                const toSend = batch.splice(0, BATCH);
+                await send(toSend);
+              }
+            })
+            .catch(err => console.error(`Failed to download ${file.name}:`, err.message))
         )
       );
 
-      const buffers = results
-        .filter((r, i) => {
-          if (r.status === 'rejected') {
-            console.error(`Failed to download ${picked[i].name}:`, r.reason);
-            return false;
-          }
-          return true;
-        })
-        .map(r => r.value);
+      // Send whatever is left in the final partial batch
+      if (batch.length > 0) await send(batch);
 
-      if (buffers.length === 0) {
+      if (!firstSent) {
         await interaction.editReply({ content: '❌ All files failed to download — check the console for details.' });
-        return;
-      }
-
-      if (destination === 'dm') {
-        await interaction.editReply({ content: '📬 Sending to your DMs!' });
-        for (let i = 0; i < buffers.length; i += 10) {
-          await interaction.user.send({ files: buffers.slice(i, i + 10) });
-        }
-      } else {
-        // First batch goes in the deferred reply, rest as follow-ups
-        await interaction.editReply({ files: buffers.slice(0, 10) });
-        for (let i = 10; i < buffers.length; i += 10) {
-          await interaction.followUp({ files: buffers.slice(i, i + 10), ephemeral: isPrivate });
-        }
       }
     } catch (err) {
       console.error('SR send error:', err.message, err.stack);
