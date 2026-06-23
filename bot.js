@@ -9,7 +9,13 @@ const MEGA_FOLDER = 'https://mega.nz/folder/DmRAhBjZ#QnVdilMScaUwF-ZbnF2xog';
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB — Discord's upload limit
 const MEDIA_EXTS = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.m4v', '.webm']);
 
-let srAll = [];
+let srAll    = [];
+let srImages = [];
+let srVideos = [];
+
+const VIDEO_EXTS = new Set(['.mp4', '.mov', '.m4v', '.webm']);
+// ~1 in 3 picks will be a video (if videos are available)
+const VIDEO_WEIGHT = 0.33;
 
 function getExt(name) {
   return name.slice(name.lastIndexOf('.')).toLowerCase();
@@ -27,10 +33,15 @@ async function loadSrFiles() {
         console.log(`Skipping ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB — over 25 MB limit)`);
         continue;
       }
-      if (MEDIA_EXTS.has(getExt(file.name))) srAll.push(file);
+      const ext = getExt(file.name);
+      if (MEDIA_EXTS.has(ext)) {
+        srAll.push(file);
+        if (VIDEO_EXTS.has(ext)) srVideos.push(file);
+        else srImages.push(file);
+      }
     }
 
-    console.log(`/sr ready: ${srAll.length} files loaded`);
+    console.log(`/sr ready: ${srAll.length} files loaded (${srImages.length} images, ${srVideos.length} videos)`);
   } catch (err) {
     console.error('MEGA load error:', err);
   }
@@ -52,6 +63,23 @@ function pickRandom(pool, count) {
   for (let i = 0; i < Math.min(count, copy.length); i++) {
     const idx = Math.floor(Math.random() * copy.length);
     out.push(copy.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
+// Weighted pick: each slot has VIDEO_WEIGHT chance of being a video (falls
+// back to images if one pool runs out)
+function pickWeighted(count) {
+  const imgCopy = [...srImages];
+  const vidCopy = [...srVideos];
+  const out = [];
+  const total = Math.min(count, srAll.length);
+
+  for (let i = 0; i < total; i++) {
+    const wantVideo = Math.random() < VIDEO_WEIGHT && vidCopy.length > 0;
+    const pool = (wantVideo || imgCopy.length === 0) ? vidCopy : imgCopy;
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
   }
   return out;
 }
@@ -364,9 +392,9 @@ function addBaseOptions(cmd) {
     .addIntegerOption(option =>
       option
         .setName('amount')
-        .setDescription('How many to send (1–150)')
+        .setDescription('How many to send (1–300)')
         .setMinValue(1)
-        .setMaxValue(150)
+        .setMaxValue(300)
         .setRequired(false)
     )
     .addBooleanOption(option =>
@@ -457,7 +485,7 @@ client.on('interactionCreate', async interaction => {
 
     await interaction.deferReply({ ephemeral: isPrivate });
 
-    const picked = pickRandom(srAll, amount);
+    const picked = pickWeighted(amount);
 
     try {
       // Download all files in parallel; skip any that fail instead of crashing
