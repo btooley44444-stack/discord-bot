@@ -1,7 +1,9 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const { File } = require('megajs');
 
-const TOKEN = 'MTUwNTI4MjYxMjMzNDMwMTIyNA.GNLUeP.1thrCtLJ9xaAJSSvXf8upZQAZjmbPd3gEcJEyg';
+require('dotenv').config();
+
+const TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = '1505282612334301224';
 const MEGA_FOLDER    = 'https://mega.nz/folder/DmRAhBjZ#QnVdilMScaUwF-ZbnF2xog';
 const BH_MEGA_FOLDER = 'https://mega.nz/folder/JjJE3BpK#EUO5aFLPJ7MwTo363iqIUQ';
